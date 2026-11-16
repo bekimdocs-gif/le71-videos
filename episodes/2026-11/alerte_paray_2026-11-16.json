@@ -1,0 +1,31 @@
+{
+ "format": "alerte",
+ "date_label": "Lun. 16 nov.",
+ "voice_speed": 1.0,
+ "accroche": "Accident au rond-point Gifi de Paray",
+ "question": "Vous passez souvent par ce rond-point ?",
+ "ticker": "ALERTE 71  •  Accident à Paray-le-Monial, rond-point Gifi  •  Prudence dans le secteur  •  Abonnez-vous à LE 71 Flash News  •",
+ "voix": {
+  "intro": "Alerte info : accident au rond-point Gifi, à Paray-le-Monial.",
+  "fin": "Vous passez souvent par ce rond-point ? Restez prudents, et abonnez-vous à LE 71 pour être alerté."
+ },
+ "items": [
+  {
+   "tag": "PARAY",
+   "band": "LUN. 16 NOV. · CET APRÈS-MIDI",
+   "short": "Accident au rond-point Gifi de Paray",
+   "title": "Accident au rond-point Gifi",
+   "desc": "Une voiture accidentée sur le rond-point, 3 véhicules de pompiers sur place. Aucun blessé constaté.",
+   "place": "Rond-point Gifi, Paray-le-Monial",
+   "commune": "Paray-le-Monial",
+   "theme": "secours",
+   "source": "Témoin LE 71",
+   "photo": "/home/claude/alerte_paray/photo_panel.png",
+   "voix": "Cet après-midi, une voiture a été accidentée sur le rond-point, près du magasin Gifi, à Paray-le-Monial. Trois véhicules de pompiers sont sur place. Aucun blessé n'a été constaté. La circulation est ralentie : soyez prudents dans le secteur, et partagez à ceux qui passent par là.",
+   "lonlat": [
+    4.12,
+    46.451
+   ]
+  }
+ ]
+}

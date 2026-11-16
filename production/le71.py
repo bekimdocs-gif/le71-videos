@@ -716,6 +716,15 @@ def scene_ouverture(ctx, t, dur):
     rect(ctx, 0, H - 28, W, 28, RED)
     wipe_in(ctx, t)
 
+_PHOTOS = {}
+def draw_photo(ctx, path, w, h):
+    if path not in _PHOTOS:
+        _PHOTOS[path] = cairo.ImageSurface.create_from_png(path)
+    img = _PHOTOS[path]; iw, ih = img.get_width(), img.get_height()
+    k = max(w / iw, h / ih)
+    ctx.save(); ctx.translate((w - iw * k) / 2, (h - ih * k) / 2); ctx.scale(k, k)
+    ctx.set_source_surface(img, 0, 0); ctx.paint(); ctx.restore()
+
 def scene_item(ctx, t, dur, it, idx, total):
     rect(ctx, 0, 0, W, H, WHITE)
     rect(ctx, 0, 0, W * clamp(t / dur), 12, RED)
@@ -725,7 +734,10 @@ def scene_item(ctx, t, dur, it, idx, total):
     z = 1 + .04 * (t / dur)
     ctx.translate(PW / 2, PH / 2); ctx.scale(z, z); ctx.translate(-PW / 2, -PH / 2)
     global CUR_ITEM; CUR_ITEM = it
-    ILL.get(it.get("theme", "generic"), il_generic)(ctx, t)
+    if it.get("photo"):                        # photo de terrain (plaques floutées en amont) à la place de l'illustration
+        draw_photo(ctx, it["photo"], PW, PH)
+    else:
+        ILL.get(it.get("theme", "generic"), il_generic)(ctx, t)
     ctx.restore()
     ctx.set_source_rgb(*RED); ctx.set_line_width(8); ctx.rectangle(px, py, PW, PH); ctx.stroke()
     nb = eback(prog(t, .3, .8))
