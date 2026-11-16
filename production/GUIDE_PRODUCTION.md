@@ -108,7 +108,7 @@ Le moteur génère la voix de Léa (Piper, voix française siwis), anime chaque 
 
 - `tag` : mot court dans la case rouge du sommaire (AUJ., HIER, ROUTE, nom de ville, DEMAIN…).
 - `band` : bandeau noir sous l'image (date/heure).
-- `theme` (illustration animée) : `concert`, `marche`, `basket`/`sport`, `humour`, `theatre`/`culture`, `route` (travaux, circulation), `secours` (faits divers, pompiers), `mairie` (politique locale, conseil municipal), `economie` (entreprises, emploi), `campagne` (agriculture, ruralité), `generic`.
+- `theme` (illustration animée, aussi utilisée sur la couverture) — **choisir celui qui correspond vraiment au sujet n°1**, sinon `generic` : `route` (travaux, circulation), `secours` (faits divers, pompiers, accidents), `batiment` (artisans, chantiers, logement), `economie` (industrie, entreprises, emploi), `mairie` (politique locale, conseil municipal), `justice` (tribunal, procès, condamnation), `sante` (hôpital, urgences, médecins), `ecole` (écoles, collèges, lycées), `campagne` (agriculture, ruralité), `football`, `basket`/`sport`, `marche`, `concert`, `humour`, `theatre`/`culture`, `generic`. Jamais une illustration qui contredit le sujet (ex. `economie`, avec sa courbe qui monte, pour une mauvaise nouvelle économique : préférer `batiment`, `mairie` ou `generic`).
 
 - `question` (au niveau de l'épisode, recommandé) : la question finale affichée sur l'écran de fin, ex. « Vous prenez souvent la RCEA ? ».
 
@@ -156,10 +156,11 @@ Uniquement pour un événement **important, récent (moins de 6 h), vérifié pa
 
 Le moteur place automatiquement une **couverture fixe de 0,3 s en tout début de vidéo** (TikTok prend la 1re image comme couverture). Elle est conçue pour la **grille du profil**, où TikTok recadre en 3:4 (seule la bande y 240 → 1680 est visible) et pose le **compteur de vues en blanc, en bas à gauche**.
 
-- De haut en bas : bandeau rouge du rendez-vous, visuel (photo de terrain ou illustration du thème), **titre = l'info principale** (2 lignes max), puis **bande sombre** : à gauche RIEN (zone du compteur de vues), à droite la commune et la date.
+- **Le titre est l'élément le plus gros** : c'est lui qui fait cliquer. De haut en bas : bandeau rouge du rendez-vous (discret), visuel (photo de terrain ou illustration du thème du sujet n°1), **titre = l'info principale** (2 lignes de préférence, 3 au maximum ; viser 4 à 8 mots), puis **bande sombre** : à gauche RIEN (zone du compteur de vues), à droite la commune et la date.
+- **Photo de terrain** : dès qu'on en a une (photo de l'éditeur ou libre de droits, jamais une photo de presse), elle remplace l'illustration et rend la couverture bien plus forte. Champ `"photo"` du sujet ou de `couverture`.
 - Ne jamais mettre de texte ni de fond clair dans le coin bas-gauche de la bande visible (x < 440, y 1500 → 1680) : le compteur deviendrait illisible.
-- Réglages facultatifs dans l'épisode : `"couverture": {"titre": "…", "lieu": "…", "sous_titre": "…", "photo": "chemin.png"}` ; `"couverture": false` pour la retirer. Par défaut : titre = `accroche` (ou `title` du 1er sujet pour une alerte), lieu = `commune` du 1er sujet.
-- Export seul : `python3 le71.py episode.json - --cover couverture.png`. À contrôler avec les aperçus (`--stills` produit `couverture.png`).
+- Réglages facultatifs dans l'épisode : `"couverture": {"titre": "…", "lieu": "…", "photo": "chemin.png", "instant": 4.0, "cadrage": 150}` (`instant` = moment de l'animation figé sur la couverture, `cadrage` = hauteur de ciel masquée) ; `"couverture": false` pour la retirer. Par défaut : titre = `accroche` (ou `title` du 1er sujet pour une alerte), lieu = `commune` du 1er sujet.
+- Export seul : `python3 le71.py episode.json - --cover couverture.png`. À contrôler avec les aperçus (`--stills` produit `couverture.png`) : titre lisible et non coupé, illustration cohérente avec le sujet, rien qui touche les bords.
 
 ## 7. Publication
 

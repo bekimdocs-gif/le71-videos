@@ -520,6 +520,136 @@ def il_generic(ctx, t):
 ILL.update(route=il_route, secours=il_secours, mairie=il_mairie, economie=il_economie, campagne=il_campagne,
            sport=il_basket, culture=il_theatre, generic=il_generic)
 
+def il_batiment(ctx, t):
+    """chantier : maison en construction, échafaudage, grue, artisan"""
+    rect(ctx, 0, 0, PW, PH, (.98, .98, .98)); cloud(ctx, ((t * 26) % 1300) - 200, 90, 1)
+    rect(ctx, 0, 600, PW, 100, (.87, .87, .87))
+    # maison en construction (murs en parpaings, charpente apparente)
+    rect(ctx, 150, 380, 400, 220, (.93, .93, .93))
+    for r in range(5):
+        y = 380 + r * 44
+        line(ctx, 150, y, 550, y, (.84, .84, .84), 3)
+        for c in range(6):
+            x = 150 + c * 80 + (40 if r % 2 else 0)
+            if 150 < x < 550: line(ctx, x, y, x, y + 44, (.84, .84, .84), 3)
+    rect(ctx, 300, 470, 90, 130, WHITE); rect(ctx, 430, 440, 80, 70, (.78, .89, .97))
+    for a, b in (((130, 380), (350, 250)), ((350, 250), (570, 380)), ((130, 380), (570, 380)),
+                 ((350, 250), (350, 380)), ((240, 315), (240, 380)), ((460, 315), (460, 380))):
+        line(ctx, a[0], a[1], b[0], b[1], (.72, .52, .3), 12)
+    # échafaudage
+    for x in (40, 120):
+        line(ctx, x, 300, x, 600, GREY, 7)
+    for y in (360, 470):
+        rect(ctx, 28, y, 104, 12, (.72, .52, .3)); line(ctx, 40, y + 12, 120, y + 110, (.6, .6, .6), 4)
+    # grue : la charge monte et descend
+    line(ctx, 760, 110, 760, 600, RED, 16); rect(ctx, 720, 580, 80, 20, INK)
+    line(ctx, 640, 130, 930, 130, RED, 12); line(ctx, 760, 70, 640, 130, RED, 5); line(ctx, 760, 70, 930, 130, RED, 5)
+    rect(ctx, 630, 132, 50, 44, GREY)
+    hx = 870 + math.sin(t * .8) * 30; hy = 330 + math.sin(t * 1.1) * 90
+    line(ctx, hx, 130, hx, hy, INK, 4); rect(ctx, hx - 44, hy, 88, 50, (.72, .52, .3)); line(ctx, hx - 44, hy + 25, hx + 44, hy + 25, (.6, .42, .22), 4)
+    # artisan casqué
+    wx = ((t * 70) % 1200) - 100
+    walker(ctx, wx, 690, 1.15, INK, t, 1.2, (1, .75, .1))
+    bob = abs(math.sin(t * 1.2 * 2 * math.pi)) * 3 * 1.15
+    ctx.set_source_rgb(1, .75, .1); ctx.arc(wx, 690 - bob - 108 * 1.15, 16, math.pi, 2 * math.pi); ctx.fill()
+
+def il_football(ctx, t):
+    """terrain, but et ballon"""
+    rect(ctx, 0, 0, PW, PH, (.98, .98, .98)); cloud(ctx, ((t * 30) % 1300) - 200, 80, 1)
+    for i in range(6):
+        rect(ctx, 0, 400 + i * 50, PW, 50, (.80, .90, .76) if i % 2 else (.85, .93, .81))
+    line(ctx, 0, 402, PW, 402, WHITE, 6)
+    ctx.set_source_rgb(*WHITE); ctx.set_line_width(6); ctx.save(); ctx.translate(250, 560); ctx.scale(1, .34); ctx.arc(0, 0, 150, 0, 2 * math.pi); ctx.restore(); ctx.stroke()
+    # but et filet
+    gx, gy, gw, gh = 610, 250, 290, 260
+    ctx.set_source_rgba(.6, .6, .6, .55); ctx.set_line_width(2)
+    for i in range(1, 12):
+        ctx.move_to(gx + i * gw / 12, gy); ctx.line_to(gx + i * gw / 12, gy + gh)
+    for j in range(1, 10):
+        ctx.move_to(gx, gy + j * gh / 10); ctx.line_to(gx + gw, gy + j * gh / 10)
+    ctx.stroke()
+    for a, b in (((gx, gy + gh), (gx, gy)), ((gx, gy), (gx + gw, gy)), ((gx + gw, gy), (gx + gw, gy + gh))):
+        line(ctx, a[0], a[1], b[0], b[1], WHITE, 16); line(ctx, a[0], a[1], b[0], b[1], (.8, .8, .8), 3)
+    # ballon : tir en cloche vers le but, en boucle
+    u = (t % 2.4) / 2.4
+    bx = 200 + u * 520; by = 600 - math.sin(u * math.pi) * 240 - u * 190
+    circ(ctx, bx, 640 - u * 120, 22 - u * 6, (0, 0, 0), .10)
+    circ(ctx, bx, by, 30, WHITE); ctx.set_source_rgb(*INK); ctx.set_line_width(4); ctx.arc(bx, by, 30, 0, 2 * math.pi); ctx.stroke()
+    ctx.save(); ctx.translate(bx, by); ctx.rotate(t * 6)
+    poly(ctx, [(0, -12), (11, -4), (7, 10), (-7, 10), (-11, -4)], INK); ctx.restore()
+    walker(ctx, 130 + math.sin(t * 1.5) * 30, 680, 1.25, INK, t, 1.6, RED)
+    walker(ctx, 470 + math.sin(t * 1.2 + 1) * 40, 640, 1.05, INK, t, 1.4, (.2, .35, .7))
+
+def il_justice(ctx, t):
+    """palais de justice et balance"""
+    rect(ctx, 0, 0, PW, PH, (.98, .98, .98)); cloud(ctx, ((t * 24) % 1300) - 200, 70, 1)
+    rect(ctx, 0, 600, PW, 100, (.87, .87, .87))
+    rect(ctx, 90, 300, 520, 300, (.96, .96, .96)); poly(ctx, [(70, 300), (350, 190), (630, 300)], (.92, .92, .92))
+    rect(ctx, 70, 292, 560, 18, (.86, .86, .86))
+    for i in range(5):
+        x = 130 + i * 98; rect(ctx, x, 330, 46, 250, WHITE); rect(ctx, x - 8, 322, 62, 12, (.86, .86, .86)); rect(ctx, x - 8, 576, 62, 12, (.86, .86, .86))
+    rect(ctx, 250, 236, 200, 40, PINK2); text(ctx, "TRIBUNAL", 350, 268, XB_F, 34, RED, "c")
+    rect(ctx, 70, 588, 560, 12, (.8, .8, .8))
+    # balance (léger balancement)
+    cx, cy = 770, 250; a = math.sin(t * 1.3) * .09
+    line(ctx, cx, cy, cx, 560, RED, 14); rect(ctx, cx - 70, 556, 140, 20, RED); circ(ctx, cx, cy, 18, RED)
+    dx, dy = math.cos(a) * 118, math.sin(a) * 118
+    line(ctx, cx - dx, cy - dy, cx + dx, cy + dy, RED, 12)
+    for sgn in (-1, 1):
+        px_, py_ = cx + sgn * dx, cy + sgn * dy
+        line(ctx, px_, py_, px_ - 48, py_ + 120, INK, 3); line(ctx, px_, py_, px_ + 48, py_ + 120, INK, 3)
+        ctx.set_source_rgb(*INK); ctx.arc(px_, py_ + 120, 54, 0, math.pi); ctx.fill()
+    walker(ctx, ((t * 60) % 1200) - 100, 690, 1.1, INK, t, 1.1)
+
+def il_sante(ctx, t):
+    """hôpital et tracé du pouls"""
+    rect(ctx, 0, 0, PW, PH, (.98, .98, .98)); cloud(ctx, ((t * 26) % 1300) - 200, 80, 1)
+    rect(ctx, 0, 600, PW, 100, (.87, .87, .87))
+    rect(ctx, 140, 250, 460, 350, (.95, .95, .95)); rect(ctx, 600, 360, 220, 240, (.92, .92, .92))
+    for r in range(3):
+        for c in range(4): rect(ctx, 180 + c * 104, 330 + r * 80, 64, 48, (.78, .89, .97))
+    for r in range(2):
+        for c in range(2): rect(ctx, 632 + c * 90, 400 + r * 80, 60, 48, (.78, .89, .97))
+    rect(ctx, 320, 520, 100, 80, RED); rect(ctx, 290, 506, 160, 14, (.8, .8, .8))
+    rect(ctx, 310, 170, 120, 100, (.12, .36, .85)); text(ctx, "H", 370, 254, BLACK_F, 104, WHITE, "c", italic=False)
+    # pouls
+    ctx.set_source_rgb(*RED); ctx.set_line_width(9); ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.set_line_join(cairo.LINE_JOIN_ROUND)
+    base, n = 262, clamp(((t * .6) % 1.4))
+    pts = [(630, base), (700, base), (724, base - 50), (752, base + 40), (780, base - 76), (808, base), (930, base)]
+    tot = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts, pts[1:])); left = tot * n
+    ctx.move_to(*pts[0])
+    for a, b in zip(pts, pts[1:]):
+        d = math.hypot(b[0] - a[0], b[1] - a[1]); k = clamp(left / d) if d else 0
+        ctx.line_to(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k); left -= d
+        if left <= 0: break
+    ctx.stroke()
+    walker(ctx, ((t * 70) % 1200) - 100, 690, 1.1, INK, t, 1.2, (.95, .95, .95))
+    walker(ctx, 1100 - ((t * 55 + 300) % 1200), 690, 1.1, INK, t, 1.1, RED)
+
+def il_ecole(ctx, t):
+    """école, horloge et élèves"""
+    rect(ctx, 0, 0, PW, PH, (.98, .98, .98)); cloud(ctx, ((t * 26) % 1300) - 200, 70, 1)
+    rect(ctx, 0, 600, PW, 100, (.87, .87, .87))
+    rect(ctx, 160, 320, 560, 280, (.96, .96, .96)); poly(ctx, [(140, 320), (440, 200), (740, 320)], PINK3)
+    circ(ctx, 440, 276, 30, WHITE); ctx.set_source_rgb(*INK); ctx.set_line_width(4); ctx.arc(440, 276, 30, 0, 2 * math.pi); ctx.stroke()
+    line(ctx, 440, 276, 440 + math.sin(t * .8) * 20, 276 - math.cos(t * .8) * 20, INK, 4); line(ctx, 440, 276, 452, 276, INK, 4)
+    rect(ctx, 350, 340, 180, 44, PINK2); text(ctx, "ÉCOLE", 440, 376, XB_F, 38, RED, "c")
+    for c in (0, 1, 3, 4): rect(ctx, 200 + c * 104, 420, 70, 80, (.78, .89, .97))
+    rect(ctx, 395, 470, 90, 130, RED)
+    flag(ctx, 790, 250, t, 70, 44); line(ctx, 790, 340, 790, 600, (.74, .74, .74), 5)
+    # arbre
+    rect(ctx, 60, 500, 18, 100, (.72, .52, .3)); circ(ctx, 69, 460, 60, (.81, .89, .75))
+    for i, col in enumerate(((1, .75, .1), RED, (.2, .35, .7))):
+        x = ((t * (55 + i * 12) + i * 300) % 1200) - 100
+        walker(ctx, x, 690, .8, INK, t + i * .3, 1.7, col)
+        rect(ctx, x - 22, 690 - 86 * .8, 14, 30, col)
+
+ILL.update(batiment=il_batiment, chantier=il_batiment, artisanat=il_batiment,
+           football=il_football, foot=il_football,
+           justice=il_justice, tribunal=il_justice,
+           sante=il_sante, hopital=il_sante,
+           ecole=il_ecole, education=il_ecole)
+
 # ---------- météo : pictos ----------
 def wx_icon(ctx, x, y, s, kind, t):
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s)
@@ -875,6 +1005,37 @@ def _fit(ctx, s, fam, size, maxw, maxlines, mini):
         size -= 6; lines = wrap(ctx, s, fam, size, maxw)
     return size, lines[:maxlines]
 
+# Couverture : instant de l'animation où le sujet est bien au centre, et hauteur de ciel masquée, par thème
+COVER_T = dict(secours=2.3, route=1.85, economie=3.0, sante=3.6)
+COVER_CADRAGE = dict(generic=215)
+
+def _wrap_titre(ctx, s, size, maxw):
+    """Comme wrap(), mais ne laisse jamais « : », « ? » ou « ! » seul en début de ligne."""
+    font(ctx, BLACK_F, size)
+    mots = []
+    for wd in s.split():
+        if wd in (":", "?", "!", ";", "»") and mots: mots[-1] += " " + wd
+        elif mots and mots[-1] == "«": mots[-1] += " " + wd
+        else: mots.append(wd)
+    lines, cur = [], ""
+    for wd in mots:
+        tst = (cur + " " + wd).strip()
+        if tw(ctx, tst) <= maxw: cur = tst
+        else:
+            if cur: lines.append(cur)
+            cur = wd
+    if cur: lines.append(cur)
+    return lines
+
+def _fit_titre(ctx, s, maxw, haut):
+    """Titre de couverture le plus gros possible : 2 lignes de préférence, 3 si le titre est long."""
+    for maxlines, sizes in ((2, range(216, 148, -6)), (3, range(180, 92, -6))):
+        for size in sizes:
+            ls = _wrap_titre(ctx, s, size, maxw)
+            if len(ls) <= maxlines and all(tw(ctx, l) <= maxw for l in ls) and (len(ls) - 1) * size * .94 + size * .70 <= haut:
+                return size, ls
+    return 96, _wrap_titre(ctx, s, 96, maxw)[:3]
+
 def scene_couverture(ctx, t=0, dur=0):
     f = FORMATS[EP["format"]]; cv = EP.get("couverture") or {}
     if not isinstance(cv, dict): cv = {}
@@ -883,27 +1044,35 @@ def scene_couverture(ctx, t=0, dur=0):
     titre = cv.get("titre") or (it.get("title") if alerte else EP.get("accroche")) or it.get("short") or it.get("title") \
         or EP.get("meteo", {}).get("periode", "") or f["sub"]
     lieu = cv.get("lieu", it.get("commune", "Saône-et-Loire"))
-    sous = cv.get("sous_titre", f["sub"])
     rect(ctx, 0, 0, W, H, WHITE)
-    # 1. bandeau du rendez-vous (visible dans la grille à partir de y=240)
-    rect(ctx, 0, 0, W, 520, RED)
-    size, ls = _fit(ctx, " ".join(EP.get("titre") or f["title"]), BLACK_F, 216, 980, 1, 110)
-    text(ctx, ls[0], W / 2, 420, BLACK_F, size, WHITE, "c")
-    text(ctx, "FLASH NEWS · SAÔNE-ET-LOIRE", W / 2, 488, XB_F, 50, WHITE, "c")
-    # 2. visuel : photo de terrain ou illustration du thème
-    vy, vh = 520, 610
+    # 1. bandeau du rendez-vous, plus discret que le titre (visible dans la grille à partir de y=240)
+    BAN = 440
+    rect(ctx, 0, 0, W, BAN, RED)
+    size, ls = _fit(ctx, " ".join(EP.get("titre") or f["title"]), BLACK_F, 156, 980, 1, 96)
+    text(ctx, ls[0], W / 2, 378, BLACK_F, size, WHITE, "c")
+    text(ctx, "FLASH NEWS · SAÔNE-ET-LOIRE", W / 2, 424, XB_F, 40, WHITE, "c")
+    # 2. visuel : photo de terrain ou illustration du thème (cadrée sur le sujet, pas sur le ciel)
+    vy, vh = BAN, 520
     ctx.save(); ctx.rectangle(0, vy, W, vh); ctx.clip(); ctx.translate(0, vy)
     photo = cv.get("photo") or it.get("photo")
     if photo and os.path.exists(photo):
         draw_photo(ctx, photo, W, vh)
     else:
-        k = W / PW; ctx.translate(0, (vh - PH * k) / 2); ctx.scale(k, k)
-        ILL.get(it.get("theme", "generic"), il_generic)(ctx, 1.5)
+        # illustration dessinée à part, puis posée entière en largeur ; les bords (ciel, sol) sont prolongés
+        global CUR_ITEM; CUR_ITEM = it
+        ill = cairo.ImageSurface(cairo.FORMAT_RGB24, PW, PH)
+        th = it.get("theme", "generic") if it.get("theme", "generic") in ILL else "generic"
+        ILL[th](cairo.Context(ill), cv.get("instant", COVER_T.get(th, 4.0)))
+        haut = cv.get("cadrage", COVER_CADRAGE.get(th, 150))   # on masque le haut (ciel) de l'illustration
+        k = vh / (PH - haut)
+        ctx.translate((W - PW * k) / 2, -haut * k); ctx.scale(k, k)
+        pat = cairo.SurfacePattern(ill); pat.set_extend(cairo.EXTEND_PAD)
+        ctx.set_source(pat); ctx.paint()
     ctx.restore()
     rect(ctx, 0, vy + vh, W, 16, RED)
-    # 3. titre (l'info principale), centré entre le visuel et la bande du bas
+    # 3. titre = l'info principale : le plus gros élément de la couverture
     top, bot = vy + vh + 16, VUES_Y
-    size, ls = _fit(ctx, titre.upper(), BLACK_F, 160, 990, 2, 96)
+    size, ls = _fit_titre(ctx, titre.upper(), 1000, bot - top - 70)
     lh, cap = size * .94, size * .70
     y = top + (bot - top - ((len(ls) - 1) * lh + cap)) / 2 + cap
     for ln in ls:
@@ -915,10 +1084,8 @@ def scene_couverture(ctx, t=0, dur=0):
         size, ls = _fit(ctx, lieu.upper(), XB_F, 84, W - VUES_W - 50, 1, 44)
         text(ctx, ls[0], W - 50, 1606, XB_F, size, WHITE, "r")
     text(ctx, EP.get("date_label", "").upper(), W - 50, 1656, "Inter", 30, (.8, .8, .8), "r", italic=False, bold=True)
-    # 5. hors grille (visible seulement en plein écran)
-    size, ls = _fit(ctx, sous, XB_F, 54, 980, 1, 36)
-    text(ctx, ls[0], W / 2, 1790, XB_F, size, WHITE, "c")
-
+    # 5. hors grille (plein écran seulement) : la signature du compte
+    text(ctx, "@flashnews71000", W / 2, 1800, "Inter", 34, (.55, .55, .55), "c", italic=False, bold=True)
 
 # ---------- voix (Piper, voix française douce) ----------
 VOICE = os.environ.get("LE71_VOICE", os.path.join(HERE, "voice", "fr_FR-siwis-medium.onnx"))
