@@ -863,6 +863,63 @@ def scene_fin(ctx, t, dur):
     street(ctx, t, H - 520)
     rect(ctx, 0, H - 28, W * eio(prog(t, 0, .5)), 28, RED)
 
+# ---------- couverture (image fixe = 1re image de la vidéo) ----------
+# Sur la grille du profil TikTok, la couverture est recadrée en 3:4 : seule la bande y 240 → 1680 est visible,
+# et le compteur de vues s'affiche en blanc, en bas à gauche de cette bande.
+# Règles : tout l'essentiel entre SAFE_TOP et SAFE_BOT ; bande sombre SANS TEXTE à gauche sous VUES_Y.
+SAFE_TOP, SAFE_BOT, VUES_Y, VUES_W = 240, 1680, 1500, 440
+
+def _fit(ctx, s, fam, size, maxw, maxlines, mini):
+    lines = wrap(ctx, s, fam, size, maxw)
+    while (len(lines) > maxlines or any(tw(ctx, l) > maxw for l in lines)) and size > mini:
+        size -= 6; lines = wrap(ctx, s, fam, size, maxw)
+    return size, lines[:maxlines]
+
+def scene_couverture(ctx, t=0, dur=0):
+    f = FORMATS[EP["format"]]; cv = EP.get("couverture") or {}
+    if not isinstance(cv, dict): cv = {}
+    it = (EP.get("items") or [{}])[0]
+    alerte = EP["format"] == "alerte"
+    titre = cv.get("titre") or (it.get("title") if alerte else EP.get("accroche")) or it.get("short") or it.get("title") \
+        or EP.get("meteo", {}).get("periode", "") or f["sub"]
+    lieu = cv.get("lieu", it.get("commune", "Saône-et-Loire"))
+    sous = cv.get("sous_titre", f["sub"])
+    rect(ctx, 0, 0, W, H, WHITE)
+    # 1. bandeau du rendez-vous (visible dans la grille à partir de y=240)
+    rect(ctx, 0, 0, W, 520, RED)
+    size, ls = _fit(ctx, " ".join(EP.get("titre") or f["title"]), BLACK_F, 216, 980, 1, 110)
+    text(ctx, ls[0], W / 2, 420, BLACK_F, size, WHITE, "c")
+    text(ctx, "FLASH NEWS · SAÔNE-ET-LOIRE", W / 2, 488, XB_F, 50, WHITE, "c")
+    # 2. visuel : photo de terrain ou illustration du thème
+    vy, vh = 520, 610
+    ctx.save(); ctx.rectangle(0, vy, W, vh); ctx.clip(); ctx.translate(0, vy)
+    photo = cv.get("photo") or it.get("photo")
+    if photo and os.path.exists(photo):
+        draw_photo(ctx, photo, W, vh)
+    else:
+        k = W / PW; ctx.translate(0, (vh - PH * k) / 2); ctx.scale(k, k)
+        ILL.get(it.get("theme", "generic"), il_generic)(ctx, 1.5)
+    ctx.restore()
+    rect(ctx, 0, vy + vh, W, 16, RED)
+    # 3. titre (l'info principale), centré entre le visuel et la bande du bas
+    top, bot = vy + vh + 16, VUES_Y
+    size, ls = _fit(ctx, titre.upper(), BLACK_F, 160, 990, 2, 96)
+    lh, cap = size * .94, size * .70
+    y = top + (bot - top - ((len(ls) - 1) * lh + cap)) / 2 + cap
+    for ln in ls:
+        text(ctx, ln, W / 2, y, BLACK_F, size, INK, "c"); y += lh
+    # 4. bande sombre : à gauche, RIEN (le compteur de vues TikTok s'y pose) ; à droite, le lieu et la date
+    rect(ctx, 0, VUES_Y, W, H - VUES_Y, INK)
+    rect(ctx, 0, VUES_Y, W, 10, RED)
+    if lieu:
+        size, ls = _fit(ctx, lieu.upper(), XB_F, 84, W - VUES_W - 50, 1, 44)
+        text(ctx, ls[0], W - 50, 1606, XB_F, size, WHITE, "r")
+    text(ctx, EP.get("date_label", "").upper(), W - 50, 1656, "Inter", 30, (.8, .8, .8), "r", italic=False, bold=True)
+    # 5. hors grille (visible seulement en plein écran)
+    size, ls = _fit(ctx, sous, XB_F, 54, 980, 1, 36)
+    text(ctx, ls[0], W / 2, 1790, XB_F, size, WHITE, "c")
+
+
 # ---------- voix (Piper, voix française douce) ----------
 VOICE = os.environ.get("LE71_VOICE", os.path.join(HERE, "voice", "fr_FR-siwis-medium.onnx"))
 
@@ -885,7 +942,15 @@ def tts(textv, out):
     w = wave.open(out); d = w.getnframes() / w.getframerate(); w.close(); return d
 
 # ---------- pipeline ----------
+COVER_DUR = .3   # durée de la couverture en tête de vidéo (TikTok prend la 1re image comme couverture)
+
 def plan():
+    sc = _plan()
+    if EP.get("couverture", True) is not False:
+        sc.insert(0, ("couverture", scene_couverture, None, COVER_DUR))
+    return sc
+
+def _plan():
     sc = [("intro", scene_intro, EP["voix"]["intro"], .35)]
     if EP["format"] == "alerte":
         sc = [("alerte", scene_alerte, EP["voix"]["intro"], .3)]
@@ -920,26 +985,32 @@ def main():
     global EP
     import argparse, numpy as np
     from concurrent.futures import ProcessPoolExecutor
-    ap = argparse.ArgumentParser(); ap.add_argument("episode"); ap.add_argument("out"); ap.add_argument("--stills")
+    ap = argparse.ArgumentParser(); ap.add_argument("episode"); ap.add_argument("out"); ap.add_argument("--stills"); ap.add_argument("--cover", help="exporte la couverture seule (PNG)")
     a = ap.parse_args()
     EP = json.load(open(a.episode))
     for it in EP.get("items", []): it.setdefault("lonlat", locate(it["commune"]))
     if EP["format"] == "meteo":
         for v in EP["meteo"]["villes"]: v.setdefault("lonlat", locate(v["nom"]))
     json.dump(EP, open(a.episode, "w"), ensure_ascii=False, indent=1)
+    if a.cover:
+        surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H); scene_couverture(cairo.Context(surf)); surf.write_to_png(a.cover)
+        if a.out == "-": print("OK", a.cover); return
     work = tempfile.mkdtemp(prefix="le71_")
     sc = plan(); durs = {}; audio = []; sr = None
     for k, fn, v, extra in sc:
+        if v is None:                               # scène muette (couverture)
+            durs[k] = round(extra * FPS) / FPS; audio.append(None); continue
         wav = os.path.join(work, k + ".wav"); vd = tts(v, wav)
         durs[k] = round((vd + .15 + extra) * FPS) / FPS
         w = wave.open(wav); sr = w.getframerate(); arr = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16); w.close()
         seg = np.zeros(int(round(durs[k] * sr)), dtype=np.int16); lead = int(.15 * sr); seg[lead:lead + len(arr)] = arr[:len(seg) - lead]; audio.append(seg)
+    audio = [np.zeros(int(round(durs[k] * sr)), dtype=np.int16) if seg is None else seg for (k, *_), seg in zip(sc, audio)]
     o = wave.open(os.path.join(work, "voix.wav"), "wb"); o.setnchannels(1); o.setsampwidth(2); o.setframerate(sr); o.writeframes(np.concatenate(audio).tobytes()); o.close()
     if a.stills:
         os.makedirs(a.stills, exist_ok=True)
         for k, fn, v, extra in sc:
             surf = cairo.ImageSurface(cairo.FORMAT_RGB24, W, H); ctx = cairo.Context(surf)
-            fn(ctx, min(4.0, durs[k] - .5), durs[k]); surf.write_to_png(os.path.join(a.stills, k + ".png"))
+            fn(ctx, max(0, min(4.0, durs[k] - .5)), durs[k]); surf.write_to_png(os.path.join(a.stills, k + ".png"))
     with ProcessPoolExecutor(max_workers=min(8, os.cpu_count() or 2)) as ex:
         futs = [ex.submit(_render_worker, a.episode, k, durs[k], os.path.join(work, k + ".mp4")) for k, *_ in sc]
         for f in futs: f.result()

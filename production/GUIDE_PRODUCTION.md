@@ -152,6 +152,15 @@ Uniquement pour un événement **important, récent (moins de 6 h), vérifié pa
 3. Relire la voix : noms propres, chiffres, dates.
 4. Corriger et relancer si besoin. Une seule vidéo publiée, jamais une version douteuse.
 
+## 6 bis. Couverture (1re image de la vidéo)
+
+Le moteur place automatiquement une **couverture fixe de 0,3 s en tout début de vidéo** (TikTok prend la 1re image comme couverture). Elle est conçue pour la **grille du profil**, où TikTok recadre en 3:4 (seule la bande y 240 → 1680 est visible) et pose le **compteur de vues en blanc, en bas à gauche**.
+
+- De haut en bas : bandeau rouge du rendez-vous, visuel (photo de terrain ou illustration du thème), **titre = l'info principale** (2 lignes max), puis **bande sombre** : à gauche RIEN (zone du compteur de vues), à droite la commune et la date.
+- Ne jamais mettre de texte ni de fond clair dans le coin bas-gauche de la bande visible (x < 440, y 1500 → 1680) : le compteur deviendrait illisible.
+- Réglages facultatifs dans l'épisode : `"couverture": {"titre": "…", "lieu": "…", "sous_titre": "…", "photo": "chemin.png"}` ; `"couverture": false` pour la retirer. Par défaut : titre = `accroche` (ou `title` du 1er sujet pour une alerte), lieu = `commune` du 1er sujet.
+- Export seul : `python3 le71.py episode.json - --cover couverture.png`. À contrôler avec les aperçus (`--stills` produit `couverture.png`).
+
 ## 7. Publication
 
 1. Hébergement : déposer la vidéo dans le dépôt GitHub public `bekimdocs-gif/le71-videos` (`videos/AAAA-MM/`), vérifier le lien `https://raw.githubusercontent.com/bekimdocs-gif/le71-videos/main/videos/...` (HTTP 200), puis programmer dans Metricool (marque « Le 71 », blogId 8028968, réseau tiktok) à l'heure du rendez-vous, avec `isAigc: true`, `privacyOption: PUBLIC_TO_EVERYONE`, `autoAddMusic: false`, un `title` TikTok court.
