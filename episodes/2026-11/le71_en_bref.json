@@ -1,0 +1,101 @@
+{
+ "format": "special",
+ "titre": [
+  "LE 71",
+  "EN BREF"
+ ],
+ "sous_titre": "Les chiffres clés de la Saône-et-Loire",
+ "date_label": "Nov. 2026",
+ "voice_speed": 1.05,
+ "accroche": "550 310 habitants, 563 communes",
+ "accroche_tag": "LE 71 EN BREF",
+ "question": "Votre ville préférée du 71 ?",
+ "ticker": "Le 71 en bref  •  Les chiffres clés de la Saône-et-Loire  •  Abonnez-vous à LE 71 Flash News  •",
+ "voix": {
+  "intro": "Cinq cent cinquante mille habitants, cinq cent soixante-trois communes. Salut, je suis Léa, voici le 71 en bref.",
+  "sommaire": "Au sommaire : territoire, villes, économie, atouts et sport.",
+  "fin": "Et vous, quelle est votre ville préférée du 71 ? Dites-le en commentaire, et abonnez-vous à LE 71 !"
+ },
+ "items": [
+  {
+   "tag": "TERRITOIRE",
+   "band": "INSEE · DÉC. 2025",
+   "short": "563 communes, 550 310 habitants",
+   "title": "Le plus peuplé de la région",
+   "desc": "1er de Bourgogne-Franche-Comté en population, 7e de France en superficie.",
+   "place": "Préfecture : Mâcon",
+   "commune": "Mâcon",
+   "theme": "mairie",
+   "source": "Insee",
+   "voix": "Premier département de Bourgogne-Franche-Comté en population, septième de France en superficie. Préfecture : Mâcon.",
+   "lonlat": [
+    4.828,
+    46.307
+   ]
+  },
+  {
+   "tag": "VILLES",
+   "band": "LES INCONTOURNABLES",
+   "short": "Des villes emblématiques",
+   "title": "Chalon, Mâcon, Autun, Cluny…",
+   "desc": "Le Creusot et Montceau, le bassin industriel ; Cluny et Paray, l'art roman.",
+   "place": "Autun, la ville romaine",
+   "commune": "Autun",
+   "theme": "culture",
+   "source": "LE 71",
+   "voix": "Chalon, berceau de la photographie. Autun, la romaine. Le Creusot et Montceau, le bassin industriel. Cluny et Paray, l'art roman.",
+   "lonlat": [
+    4.299,
+    46.951
+   ]
+  },
+  {
+   "tag": "ÉCONOMIE",
+   "band": "1 EMPLOI SALARIÉ SUR 4",
+   "short": "Une terre d'industrie",
+   "title": "L'industrie, un quart des emplois",
+   "desc": "Le nucléaire en pointe ; charolais, vins du Mâconnais, volaille de Bresse.",
+   "place": "Le Creusot",
+   "commune": "Le Creusot",
+   "theme": "economie",
+   "source": "Insee",
+   "voix": "L'industrie, c'est un emploi salarié sur quatre, avec le nucléaire en pointe. Sans oublier le charolais, les vins du Mâconnais et la volaille de Bresse.",
+   "lonlat": [
+    4.424,
+    46.801
+   ]
+  },
+  {
+   "tag": "ATOUTS",
+   "band": "A6 · RCEA · 2 GARES TGV",
+   "short": "Un carrefour",
+   "title": "Un carrefour au cœur de la France",
+   "desc": "Axe Mâcon–Chalon dynamique ; tourisme à Solutré, Cluny et dans les vignes.",
+   "place": "Cluny",
+   "commune": "Cluny",
+   "theme": "route",
+   "source": "Insee",
+   "voix": "L'A six, la RCEA, deux gares tégévé, et un tourisme porté par Solutré, Cluny et les vignobles.",
+   "lonlat": [
+    4.659,
+    46.434
+   ]
+  },
+  {
+   "tag": "SPORT",
+   "band": "BETCLIC ÉLITE",
+   "short": "L'Élan Chalon",
+   "title": "L'Élan Chalon, le club phare",
+   "desc": "Le basket chalonnais en première division et en Coupe d'Europe.",
+   "place": "Le Colisée, Chalon-sur-Saône",
+   "commune": "Chalon-sur-Saône",
+   "theme": "sport",
+   "source": "LNB",
+   "voix": "Côté sport : l'Élan Chalon, en première division de basket et en Coupe d'Europe cette saison.",
+   "lonlat": [
+    4.853,
+    46.781
+   ]
+  }
+ ]
+}
