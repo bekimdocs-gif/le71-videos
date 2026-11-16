@@ -9,6 +9,13 @@ LIGHT = (0.97, 0.97, 0.97)
 PINK = (0.992, 0.922, 0.925)
 PINK2 = (0.965, 0.835, 0.851)
 PINK3 = (0.949, 0.757, 0.78)
+# charte « sombre » (nov. 2026) : fond nuit, titres blancs, rouge pour les bandeaux
+BG = (0.047, 0.055, 0.078)
+BG2 = (0.102, 0.114, 0.153)
+MUTE = (0.74, 0.76, 0.82)
+DRED = (0.50, 0.03, 0.08)
+# zones TikTok à laisser libres de texte : boutons à droite (x > SAFE_R entre y 850 et 1560), légende en bas (y > SAFE_B)
+SAFE_R, SAFE_B = 920, 1565
 
 BLACK_F = "Barlow Condensed Black"
 XB_F = "Barlow Condensed ExtraBold"
@@ -168,6 +175,14 @@ def street(ctx, t, top):
 
 
 # ---------- common chrome ----------
+def fond(ctx, t):
+    g = cairo.LinearGradient(0, 0, 0, H)
+    g.add_color_stop_rgb(0, 0.086, 0.094, 0.137); g.add_color_stop_rgb(.55, *BG); g.add_color_stop_rgb(1, 0.03, 0.035, 0.05)
+    ctx.set_source(g); ctx.rectangle(0, 0, W, H); ctx.fill()
+    for i in range(3):                                   # bandes diagonales discrètes, façon habillage d'info en continu
+        x = ((t * 26 + i * 520) % 1700) - 400
+        poly(ctx, [(x + 520, 0), (x + 700, 0), (x + 180, H), (x, H)], RED, .045)
+
 def header(ctx, t, label):
     text(ctx, "LE 71", 60, 128, BLACK_F, 80, RED)
     font(ctx, XB_F, 40)
@@ -176,30 +191,51 @@ def header(ctx, t, label):
     text(ctx, "FLASH NEWS", 244, 122, XB_F, 40, WHITE)
     if label:
         a = 0.35 + 0.65 * (0.5 + 0.5 * math.cos(t * 2 * math.pi / 1.2))
-        x = text(ctx, label, 1020, 120, "Inter", 30, INK, "r", italic=False, bold=True)
+        x = text(ctx, label, 1020, 120, "Inter", 30, WHITE, "r", italic=False, bold=True)
         circ(ctx, 1020 - x - 24, 110, 10, RED, a)
 
+# ---------- transitions « breaking news » : volets rouges en biais + logo ----------
+_SK = 170
+def _volet(ctx, x1, x2, col, a=1.0):
+    poly(ctx, [(x1 + _SK, 0), (x2 + _SK, 0), (x2 - _SK, H), (x1 - _SK, H)], col, a)
+
+def _logo_volet(ctx, a):
+    if a <= 0: return
+    text(ctx, "LE 71", W / 2, 960, BLACK_F, 330, WHITE, "c", alpha=a)
+    font(ctx, XB_F, 70); bw = tw(ctx, "FLASH NEWS") + 60
+    rect(ctx, (W - bw) / 2, 1010, bw, 96, WHITE, a); text(ctx, "FLASH NEWS", W / 2, 1081, XB_F, 70, RED, "c", alpha=a)
+
 def wipe_in(ctx, t):
-    p = prog(t, 0, .3)
-    if p < 1:
-        e = eio(p)
-        rect(ctx, W * e, 0, W, H, RED)
+    """début de scène : le volet rouge qui couvrait l'écran s'en va vers la droite"""
+    p = prog(t, 0, .42)
+    if p >= 1: return
+    e = eio(p); x = -_SK - 40 + (W + 2 * _SK + 420) * e
+    _volet(ctx, x - 330, x - 190, DRED); _volet(ctx, x - 150, x - 110, WHITE); _volet(ctx, x - 60, x - 30, RED)
+    _volet(ctx, x, W + 2 * _SK + 500, RED)
+    _logo_volet(ctx, clamp(1 - p * 4))
+
+def wipe_out(ctx, t, dur):
+    """fin de scène : le volet rouge arrive par la gauche et couvre l'écran"""
+    p = prog(t, dur - .24, dur - 1 / FPS)
+    if p <= 0: return
+    e = eio(p); x = -_SK - 380 + (W + 2 * _SK + 420) * e
+    _volet(ctx, x + 190, x + 330, DRED); _volet(ctx, x + 110, x + 150, WHITE); _volet(ctx, x + 30, x + 60, RED)
+    _volet(ctx, -2 * _SK - 500, x, RED)
+    _logo_volet(ctx, clamp(p * 4 - 3))
 
 def ticker(ctx, t, msg):
     y = H - 84
-    rect(ctx, 0, y, W, 84, INK)
+    rect(ctx, 0, y, W, 84, BG2); rect(ctx, 0, y, W, 4, RED)
     font(ctx, "Inter", 32, False, True)
     ww = tw(ctx, msg) + 80
     off = (t * 110) % ww
     ctx.save(); ctx.rectangle(200, y, W - 200, 84); ctx.clip()
     for k in range(3):
-        text(ctx, msg, 220 + k * ww - off, y + 54, "Inter", 32, WHITE, italic=False, bold=True)
+        text(ctx, msg, 220 + k * ww - off, y + 56, "Inter", 32, WHITE, italic=False, bold=True)
     ctx.restore()
     skew_band(ctx, -20, y, 220, 84, RED, 0.1)
     text(ctx, "EN BREF", 30, y + 58, XB_F, 46, WHITE)
 
-
-# ---- illustrations (panel local coords 960x700) ----
 PW, PH = 960, 700
 
 def crowd(ctx, t, y, col=INK, n=11):
@@ -413,7 +449,52 @@ def draw_map(ctx, x, y, w, t_draw=1.0, t_fill=1.0, stroke=6):
     ctx.set_source_rgb(*RED); ctx.set_line_width(stroke); ctx.stroke()
     return lambda lon, lat: (x + proj(lon, lat)[0] * w, y + proj(lon, lat)[1] * w)
 
-# ---------- communes : coordonnées via geo.api.gouv.fr ----------
+# ---------- carte du 71 en 3D : contour exact, inclinée, en relief ----------
+MAINV = [("Mâcon", 4.828, 46.307), ("Chalon", 4.853, 46.781), ("Autun", 4.299, 46.951), ("Le Creusot", 4.424, 46.801),
+         ("Montceau", 4.366, 46.668), ("Paray", 4.120, 46.451), ("Louhans", 5.225, 46.627)]
+
+def map3d_h(w, ky=.6):
+    """hauteur approximative occupée à l'écran par la carte 3D de largeur w"""
+    return w * M()["h"] * ky * 1.1 + w * .075
+
+def draw_map3d(ctx, cx, cy, w, t, grow=1.0, ky=.6, sway=True, villes=None):
+    """(cx, cy) = centre de la carte. grow 0→1 : la carte sort du sol. villes = (lon, lat) du sujet pour afficher les repères."""
+    m = M(); hh = m["h"]; g = clamp(grow)
+    ws = w * (.84 + .16 * g)
+    a = math.radians(-5 + (4 * math.sin(t * .7) if sway else 0)); ca, sa = math.cos(a), math.sin(a)
+    D = w * .075 * g
+    def f(px, py, lift=0.0):
+        u, v = px - .5, py - hh / 2
+        u, v = u * ca - v * sa, u * sa + v * ca
+        k = 1 + v * .30
+        return (cx + u * ws * k, cy + v * ws * ky * k - lift)
+    to_xy = lambda lon, lat: f(*proj(lon, lat), D)
+    if g <= 0: return to_xy
+    pts = m["pts"]
+    def path(lift, step=1):
+        P = pts[::step]; ctx.new_path(); ctx.move_to(*f(P[0][0], P[0][1], lift))
+        for q in P[1:]: ctx.line_to(*f(q[0], q[1], lift))
+        ctx.close_path()
+    ctx.push_group()
+    path(-22, 4); ctx.set_source_rgba(0, 0, 0, .5); ctx.fill()                       # ombre au sol
+    n = max(1, int(D / 3))
+    for i in range(n + 1):                                                           # tranche (relief)
+        k = i / n; path(D * k, 3); ctx.set_source_rgb(.36 + .22 * k, .02 + .02 * k, .06 + .03 * k); ctx.fill()
+    path(D)
+    lg = cairo.LinearGradient(cx, cy - ws * .3, cx, cy + ws * .3)
+    lg.add_color_stop_rgb(0, 1, .975, .975); lg.add_color_stop_rgb(1, *PINK2)
+    ctx.set_source(lg); ctx.fill_preserve()
+    ctx.set_line_join(cairo.LINE_JOIN_ROUND); ctx.set_source_rgb(*RED); ctx.set_line_width(max(4, w * .007)); ctx.stroke()
+    if villes is not None and g > .9:
+        sx, sy = to_xy(*villes)
+        for nom, lon, lat in MAINV:
+            x, y = to_xy(lon, lat)
+            if math.hypot(x - sx, y - sy) < 90: continue
+            circ(ctx, x, y, 6, (.55, .16, .2))
+            text(ctx, nom, x + 12, y + 9, "Inter", 24, (.42, .22, .25), italic=False, bold=True)
+    ctx.pop_group_to_source(); ctx.paint_with_alpha(clamp(g * 1.8))
+    return to_xy
+
 FALLBACK = {"macon": (4.828, 46.307), "chalon-sur-saone": (4.853, 46.781), "autun": (4.299, 46.951),
             "le creusot": (4.424, 46.801), "montceau-les-mines": (4.366, 46.668), "paray-le-monial": (4.120, 46.451),
             "charolles": (4.276, 46.435), "digoin": (3.982, 46.481), "louhans": (5.225, 46.627), "tournus": (4.909, 46.563),
@@ -679,14 +760,14 @@ def wx_icon(ctx, x, y, s, kind, t):
 # ---------- scènes ----------
 def scene_intro(ctx, t, dur):
     """générique LE 71 identique et COURT (1,5 s), puis l'accroche du jour à l'écran"""
-    rect(ctx, 0, 0, W, H, WHITE)
+    fond(ctx, t)
     rect(ctx, 0, 0, W * eio(prog(t, 0, .3)), 28, RED)
     acc = EP.get("accroche")
     k = eio(prog(t, 1.5, 1.9)) if acc else 0.0      # 0 = générique plein écran, 1 = logo en haut + accroche
     a = 0.3 + 0.7 * (0.5 + 0.5 * math.cos(t * 2 * math.pi / 1.2))
     circ(ctx, 92, 112, 12, RED, a)
-    text(ctx, "EN DIRECT DU 71", 116, 124, "Inter", 32, INK, italic=False, bold=True)
-    text(ctx, EP.get("date_label", "").upper(), 1020, 124, "Inter", 28, INK, "r", italic=False, bold=True)
+    text(ctx, "EN DIRECT DU 71", 116, 124, "Inter", 32, WHITE, italic=False, bold=True)
+    text(ctx, EP.get("date_label", "").upper(), 1020, 124, "Inter", 28, WHITE, "r", italic=False, bold=True)
     # logo : grand au centre puis remonte et rétrécit
     ly = 760 + (330 - 760) * k; ls = 1 - .45 * k
     p = prog(t, .05, .45)
@@ -711,23 +792,24 @@ def scene_intro(ctx, t, dur):
         ctx.save(); ctx.rectangle(0, 880, W, 140); ctx.clip()
         skew_band(ctx, 110 + dx, 900, bw, 104, RED); text(ctx, "FLASH NEWS", 138 + dx, 982, XB_F, 84, WHITE)
         ctx.restore()
-        rect(ctx, 110 + bw + 30, 908, 6, 88, INK, b)
-        text(ctx, "SAÔNE-ET-LOIRE", 110 + bw + 60, 982, BOLD_F, 66, INK, alpha=b)
+        rect(ctx, 110 + bw + 30, 908, 6, 88, WHITE, b)
+        text(ctx, "SAÔNE-ET-LOIRE", 110 + bw + 60, 982, BOLD_F, 66, WHITE, alpha=b)
         ctx.restore()
     if acc and k > 0:
         tag = EP.get("accroche_tag", "À LA UNE")
         font(ctx, XB_F, 52); tgw = tw(ctx, tag) + 50
         skew_band(ctx, 70 - 300 * (1 - k), 720, tgw, 76, RED); text(ctx, tag, 95 - 300 * (1 - k), 776, XB_F, 52, WHITE)
         size = 128
-        lines = wrap(ctx, acc.upper(), BLACK_F, size, 940)
+        lines = wrap(ctx, acc.upper(), BLACK_F, size, SAFE_R - 70)
         while len(lines) > 4 and size > 80:
-            size -= 8; lines = wrap(ctx, acc.upper(), BLACK_F, size, 940)
+            size -= 8; lines = wrap(ctx, acc.upper(), BLACK_F, size, SAFE_R - 70)
         y = 820 + size
         for i, ln in enumerate(lines):
             lp = eo(prog(t, 1.6 + i * .12, 2.0 + i * .12))
-            text(ctx, ln, 70 + 60 * (1 - lp), y, BLACK_F, size, INK, alpha=lp); y += size * .95
-    street(ctx, t, H - 520)
+            text(ctx, ln, 70 + 60 * (1 - lp), y, BLACK_F, size, WHITE, alpha=lp); y += size * .95
+    street(ctx, t, H - 520); rect(ctx, 0, H - 520, W, 520, BG, .55)
     rect(ctx, 0, H - 28, W * eio(prog(t, 0, .3)), 28, RED)
+    wipe_out(ctx, t, dur)
 
 FORMATS = {
     "matin": dict(title=["LE RÉVEIL 71"], sub="L'actu pour bien commencer la journée", label="LE RÉVEIL 71", sky=(1, .957, .878), night=False),
@@ -760,6 +842,7 @@ def scene_alerte(ctx, t, dur):
     for i, ln in enumerate(wrap(ctx, it.get("short", it["title"]).upper(), BLACK_F, 84, 940)[:2]):
         text(ctx, ln, W / 2, 1420 + i * 90 + 30 * (1 - r), BLACK_F, 84, WHITE, "c", alpha=r)
     text(ctx, (EP.get("date_label", "") + "  ·  " + it.get("commune", "")).upper(), W / 2, 1660, "Inter", 36, WHITE, "c", italic=False, bold=True, alpha=r)
+    wipe_out(ctx, t, dur)
 
 def sky_band(ctx, t, f):
     rect(ctx, 0, 0, W, 560, f["sky"])
@@ -787,42 +870,40 @@ def sky_band(ctx, t, f):
     rect(ctx, 0, g - 12, W, 12, RED if f["night"] else INK)
 
 def scene_ouverture(ctx, t, dur):
-    """habillage du format + sommaire + carte des lieux"""
+    """habillage du format + sommaire + grande carte 3D des lieux"""
     f = dict(FORMATS[EP["format"]])
     if EP.get("titre"): f["title"] = EP["titre"]
     if EP.get("sous_titre"): f["sub"] = EP["sous_titre"]
-    rect(ctx, 0, 0, W, H, WHITE)
-    sky_band(ctx, t, f)
-    hc = WHITE if f["night"] else RED
-    text(ctx, "LE 71", 60, 110, BLACK_F, 72, hc)
-    font(ctx, XB_F, 36); bw = tw(ctx, "FLASH NEWS") + 36
-    skew_band(ctx, 214, 66, bw, 50, RED); text(ctx, "FLASH NEWS", 232, 104, XB_F, 36, WHITE)
-    text(ctx, EP.get("date_label", "").upper(), 1020, 104, "Inter", 28, WHITE if f["night"] else INK, "r", italic=False, bold=True)
+    fond(ctx, t)
+    header(ctx, t, EP.get("date_label", "").upper())
     p = eback(prog(t, .2, .8))
-    y = 690
+    y = 330
     for ln in f["title"]:
-        ctx.save(); ctx.translate(60, y); ctx.scale(max(p, .01), max(p, .01)); text(ctx, ln, 0, 0, BLACK_F, 150, RED); ctx.restore(); y += 140
-    text(ctx, f["sub"], 62, y - 60, XB_F, 54, INK, alpha=prog(t, .6, 1.0))
-    y += 10
-    text(ctx, "AU SOMMAIRE", 62, y, "Inter", 30, GREY, italic=False, bold=True, alpha=prog(t, .8, 1.1)); y += 30
-    items = EP["items"]
+        ctx.save(); ctx.translate(60, y); ctx.scale(max(p, .01), max(p, .01)); text(ctx, ln, 0, 0, BLACK_F, 150, WHITE); ctx.restore(); y += 140
+    text(ctx, f["sub"], 62, y - 62, XB_F, 54, MUTE, alpha=prog(t, .6, 1.0))
+    y += 4
+    font(ctx, XB_F, 34); sw = tw(ctx, "AU SOMMAIRE") + 36
+    sp = eo(prog(t, .8, 1.1))
+    skew_band(ctx, 66 - 200 * (1 - sp), y - 40, sw, 48, RED); text(ctx, "AU SOMMAIRE", 82 - 200 * (1 - sp), y - 4, XB_F, 34, WHITE); y += 26
+    items = EP["items"]; n = len(items)
+    rh = 116 if n <= 3 else 92
     for i, it in enumerate(items):
-        rp = eo(prog(t, 1.0 + i * .35, 1.4 + i * .35))
-        if rp <= 0: y += 116; continue
-        dx = 160 * (1 - rp)
+        rp = eo(prog(t, 1.0 + i * .3, 1.4 + i * .3))
+        if rp <= 0: y += rh; continue
+        dx = 160 * (1 - rp); bh = rh - 20
         tag = it.get("tag", str(i + 1))
-        font(ctx, XB_F, 44); tw_ = max(110, tw(ctx, tag) + 40)
-        rect(ctx, 60 + dx, y, tw_, 96, RED, rp); text(ctx, tag, 60 + dx + tw_ / 2, y + 64, XB_F, 44, WHITE, "c", alpha=rp)
-        ctx.set_source_rgba(*RED, rp); ctx.set_line_width(5); ctx.rectangle(60 + dx + tw_, y + 2.5, 960 - tw_ - 2.5, 91); ctx.stroke()
+        font(ctx, XB_F, 44 if n <= 3 else 38); tw_ = max(110, tw(ctx, tag) + 40)
+        rect(ctx, 60 + dx + tw_, y, 960 - tw_, bh, BG2, rp)
+        rect(ctx, 60 + dx, y, tw_, bh, RED, rp); text(ctx, tag, 60 + dx + tw_ / 2, y + bh / 2 + 16, XB_F, 44 if n <= 3 else 38, WHITE, "c", alpha=rp)
         ttl = wrap(ctx, it.get("short", it["title"]), "Inter", 34, 960 - tw_ - 50, italic=False, bold=True)[0]
-        text(ctx, ttl, 60 + dx + tw_ + 24, y + 60, "Inter", 34, INK, italic=False, bold=True, alpha=rp)
-        y += 116
-    # carte des lieux
-    top = y + 20; avail = H - 100 - top
-    mw = min(560, avail / M()["h"])
-    mx = (W - mw) / 2
-    md = eo(prog(t, .8, 1.8)); mf = prog(t, 1.4, 2.0)
-    to_xy = draw_map(ctx, mx, top, mw, md, mf, 5)
+        text(ctx, ttl, 60 + dx + tw_ + 24, y + bh / 2 + 12, "Inter", 34, WHITE, italic=False, bold=True, alpha=rp)
+        y += rh
+    # grande carte 3D des lieux
+    top = y + 10; avail = SAFE_B - 20 - top
+    mw = 840
+    if map3d_h(mw) > avail: mw *= avail / map3d_h(mw)
+    cx = 490; cy = top + map3d_h(mw) / 2 + mw * .05
+    to_xy = draw_map3d(ctx, cx, cy, mw, t, eo(prog(t, .7, 1.6)))
     seen, placed, k = set(), [], 0
     for it in items:
         lbl = it.get("label_carte", it["commune"])
@@ -830,21 +911,21 @@ def scene_ouverture(ctx, t, dur):
         seen.add(lbl)
         pp = prog(t, 1.6 + k * .2, 2.0 + k * .2)
         x0, y0 = to_xy(*it["lonlat"])
-        font(ctx, XB_F, 30); lw = tw(ctx, lbl) + 18; lh = 40
-        cands = [(x0 + 22, y0 - 60), (x0 - 22 - lw, y0 - 60), (x0 + 22, y0 + 4), (x0 - 22 - lw, y0 + 4), (x0 - lw / 2, y0 - 110), (x0 - lw / 2, y0 + 30)]
+        font(ctx, XB_F, 32); lw = tw(ctx, lbl) + 20; lh = 44
+        cands = [(x0 + 24, y0 - 66), (x0 - 24 - lw, y0 - 66), (x0 + 24, y0 + 4), (x0 - 24 - lw, y0 + 4), (x0 - lw / 2, y0 - 122), (x0 - lw / 2, y0 + 30)]
         lx, ly = cands[0]
-        for cx, cy in cands:
-            if cx < 10 or cx + lw > W - 10: continue
-            if all(cx + lw < px or cx > px + pw or cy + lh < py or cy > py + ph for px, py, pw, ph in placed):
-                lx, ly = cx, cy; break
+        for qx, qy in cands:
+            if qx < 10 or qx + lw > SAFE_R + 20: continue
+            if all(qx + lw < px or qx > px + pw or qy + lh < py or qy > py + ph for px, py, pw, ph in placed):
+                lx, ly = qx, qy; break
         placed.append((lx, ly, lw, lh))
         if pp > 0:
-            pin(ctx, x0, y0 - 120 * (1 - eback(pp)), .8, RED)
+            pin(ctx, x0, y0 - 120 * (1 - eback(pp)), .9, RED)
             lb = eo(prog(t, 1.8 + k * .2, 2.1 + k * .2))
-            rect(ctx, lx, ly, lw, lh, INK, lb); text(ctx, lbl, lx + 9, ly + 30, XB_F, 30, WHITE, alpha=lb)
+            rect(ctx, lx, ly, lw, lh, BG, lb); rect(ctx, lx, ly + lh - 5, lw, 5, RED, lb); text(ctx, lbl, lx + 10, ly + 32, XB_F, 32, WHITE, alpha=lb)
         k += 1
     rect(ctx, 0, H - 28, W, 28, RED)
-    wipe_in(ctx, t)
+    wipe_in(ctx, t); wipe_out(ctx, t, dur)
 
 _PHOTOS = {}
 def draw_photo(ctx, path, w, h):
@@ -856,111 +937,147 @@ def draw_photo(ctx, path, w, h):
     ctx.set_source_surface(img, 0, 0); ctx.paint(); ctx.restore()
 
 def scene_item(ctx, t, dur, it, idx, total):
-    rect(ctx, 0, 0, W, H, WHITE)
+    """1) grande carte 3D qui situe le lieu  2) volet rouge  3) illustration ou photo. Titre et texte visibles dès le début."""
+    fond(ctx, t)
     rect(ctx, 0, 0, W * clamp(t / dur), 12, RED)
     header(ctx, t, f"{FORMATS[EP['format']]['label']} · {idx}/{total}")
-    px, py = 60, 180
-    ctx.save(); ctx.rectangle(px, py, PW, PH); ctx.clip(); ctx.translate(px, py)
-    z = 1 + .04 * (t / dur)
-    ctx.translate(PW / 2, PH / 2); ctx.scale(z, z); ctx.translate(-PW / 2, -PH / 2)
-    global CUR_ITEM; CUR_ITEM = it
-    if it.get("photo"):                        # photo de terrain (plaques floutées en amont) à la place de l'illustration
-        draw_photo(ctx, it["photo"], PW, PH)
-    else:
-        ILL.get(it.get("theme", "generic"), il_generic)(ctx, t)
-    ctx.restore()
-    ctx.set_source_rgb(*RED); ctx.set_line_width(8); ctx.rectangle(px, py, PW, PH); ctx.stroke()
-    nb = eback(prog(t, .3, .8))
+    px, py = 60, 160
+    tm = min(2.9, dur * .3)                      # durée de la carte avant le visuel
+    e = eio(prog(t, tm, tm + .45)); edge = px - 140 + (PW + 280) * e
+    if e < 1:                                    # --- carte 3D (à droite du volet)
+        ctx.save(); ctx.rectangle(max(0, edge), py - 60, W, PH + 120); ctx.clip()
+        to_xy = draw_map3d(ctx, W / 2 - 10, py + PH / 2 + 40, 830, t, eo(prog(t, .1, .9)), villes=tuple(it["lonlat"]))
+        tx, ty = to_xy(*it["lonlat"])
+        pp = prog(t, .8, 1.3)
+        if pp > 0:
+            rr = (t * .9) % 1
+            ctx.save(); ctx.translate(tx, ty); ctx.scale(1, .6); ctx.new_path()
+            ctx.set_source_rgba(*RED, 1 - rr); ctx.set_line_width(6); ctx.arc(0, 0, 16 + rr * 70, 0, 2 * math.pi); ctx.stroke(); ctx.restore()
+            pin(ctx, tx, ty - 160 * (1 - eback(pp)), 1.5, RED)
+            lb = eo(prog(t, 1.1, 1.5))
+            lbl = it.get("label_carte", it["commune"]).upper()
+            font(ctx, XB_F, 60); lw = tw(ctx, lbl) + 44
+            lx = clamp(tx - lw / 2, 70, W - 70 - lw); ly = ty - 200
+            if ly < py - 40: ly = ty + 36
+            rect(ctx, lx, ly + 20 * (1 - lb), lw, 84, BG, lb); rect(ctx, lx, ly + 76 + 20 * (1 - lb), lw, 8, RED, lb)
+            text(ctx, lbl, lx + 22, ly + 60 + 20 * (1 - lb), XB_F, 60, WHITE, alpha=lb)
+        ctx.restore()
+    if e > 0:                                    # --- visuel (à gauche du volet)
+        vw = clamp(edge - px, 0, PW)
+        ctx.save(); ctx.rectangle(px - 6, py - 6, vw + 6, PH + 12); ctx.clip()
+        ctx.save(); ctx.rectangle(px, py, PW, PH); ctx.clip(); ctx.translate(px, py)
+        z = 1 + .04 * (t / dur)
+        ctx.translate(PW / 2, PH / 2); ctx.scale(z, z); ctx.translate(-PW / 2, -PH / 2)
+        global CUR_ITEM; CUR_ITEM = it
+        if it.get("photo"):                        # photo de terrain (plaques floutées en amont) à la place de l'illustration
+            draw_photo(ctx, it["photo"], PW, PH)
+        else:
+            ILL.get(it.get("theme", "generic"), il_generic)(ctx, t)
+        ctx.restore()
+        ctx.new_path(); ctx.set_source_rgb(*RED); ctx.set_line_width(8); ctx.rectangle(px, py, PW, PH); ctx.stroke()
+        ctx.restore()
+        if e < 1:
+            o = 60
+            poly(ctx, [(edge + o, py - 60), (edge + 70 + o, py - 60), (edge + 70 - o, py + PH + 60), (edge - o, py + PH + 60)], RED)
+            poly(ctx, [(edge + 86 + o, py - 60), (edge + 104 + o, py - 60), (edge + 104 - o, py + PH + 60), (edge + 86 - o, py + PH + 60)], WHITE)
+    nb = eback(prog(t, tm + .4, tm + .9))
     if nb > 0:
         ctx.save(); ctx.translate(px + 90, py + PH - 10); ctx.scale(nb, nb)
         rect(ctx, -90, -90, 180, 180, RED); text(ctx, str(idx), 0, 62, BLACK_F, 190, WHITE, "c"); ctx.restore()
     db = eo(prog(t, .5, 1.0))
     band = it.get("band", it.get("tag", "")).upper()
     if band:
-        font(ctx, XB_F, 56); bw = tw(ctx, band) + 60
-        ctx.save(); ctx.rectangle(0, 920, W, 110); ctx.clip()
+        bsz = 56; font(ctx, XB_F, bsz)
+        while tw(ctx, band) + 60 > SAFE_R - 290 and bsz > 34: bsz -= 4; font(ctx, XB_F, bsz)
+        bw = tw(ctx, band) + 60
+        ctx.save(); ctx.rectangle(0, 880, W, 110); ctx.clip()
         dx = -(bw + 300) * (1 - db)
-        skew_band(ctx, 280 + dx, 930, bw, 84, INK); text(ctx, band, 310 + dx, 993, XB_F, 56, WHITE)
+        skew_band(ctx, 280 + dx, 890, bw, 84, WHITE); text(ctx, band, 310 + dx, 890 + 42 + bsz * .36, XB_F, bsz, INK)
         ctx.restore()
-    tp = eo(prog(t, .8, 1.3))
-    size = 112
-    lines = wrap(ctx, it["title"].upper(), BLACK_F, size, 950)
-    while len(lines) > 3 and size > 70:
-        size -= 8; lines = wrap(ctx, it["title"].upper(), BLACK_F, size, 950)
-    y = 1150
+    # bloc texte : tout doit tenir au-dessus de SAFE_B et à gauche de SAFE_R (boutons et légende TikTok)
+    TW = SAFE_R - 60
+    size, nd = 104, 3
+    while True:
+        lines = wrap(ctx, it["title"].upper(), BLACK_F, size, TW)
+        dl = wrap(ctx, it.get("desc", ""), "Inter Medium", 40, TW, italic=False)[:nd]
+        pls = wrap(ctx, it.get("place", it["commune"]), XB_F, 54, TW - 70)[:2]
+        bot = 1010 + size * .78 + (len(lines) - 1) * size * .96 + (62 + (len(dl) - 1) * 54 if dl else 0) + 80 + (len(pls) - 1) * 60 + (44 if it.get("source") else 0)
+        if (bot <= SAFE_B and len(lines) <= 3) or size <= 64:
+            if bot > SAFE_B and nd > 1: nd -= 1; continue
+            break
+        size -= 8
+    tp = eo(prog(t, .3, .8))
+    y = 1010 + size * .78
     for ln in lines:
-        text(ctx, ln, 60, y + 40 * (1 - tp), BLACK_F, size, INK, alpha=tp); y += size * .96
-    dp = eo(prog(t, 1.2, 1.7))
-    for ln in wrap(ctx, it.get("desc", ""), "Inter Medium", 42, 950, italic=False)[:3]:
-        text(ctx, ln, 62, y + 10 + 30 * (1 - dp), "Inter Medium", 42, (.2, .2, .2), italic=False, alpha=dp); y += 58
-    mp = eo(prog(t, 1.5, 2.1))
-    mtop = max(1500, y + 30)
-    to_xy = draw_map(ctx, 760, mtop, 260, 1.0, mp, 4)
-    tx, ty = to_xy(*it["lonlat"])
-    pp = prog(t, 1.9, 2.4)
-    if pp > 0:
-        pin(ctx, tx, ty - 80 * (1 - eback(pp)), .8, RED)
-        rr = (t * .9) % 1
-        ctx.new_path(); ctx.set_source_rgba(*RED, 1 - rr); ctx.set_line_width(4); ctx.arc(tx, ty, 10 + rr * 40, 0, 2 * math.pi); ctx.stroke()
-    pl = eo(prog(t, 1.7, 2.2))
-    yy = max(y + 50, 1560)
-    pin(ctx, 84, yy + 6, .8, RED)
-    for ln in wrap(ctx, it.get("place", it["commune"]), XB_F, 58, 600)[:2]:
-        text(ctx, ln, 124 - 30 * (1 - pl), yy, XB_F, 58, RED, alpha=pl); yy += 64
+        text(ctx, ln, 60, y + 40 * (1 - tp), BLACK_F, size, WHITE, alpha=tp); y += size * .96
+    y -= size * .96
+    dp = eo(prog(t, .7, 1.2))
+    if dl:
+        y += 62
+        for ln in dl:
+            text(ctx, ln, 62, y + 30 * (1 - dp), "Inter Medium", 40, MUTE, italic=False, alpha=dp); y += 54
+        y -= 54
+    pl = eo(prog(t, 1.0, 1.5))
+    y += 80
+    pin(ctx, 84, y + 6, .8, RED)
+    for ln in pls:
+        text(ctx, ln, 124 - 30 * (1 - pl), y, XB_F, 54, WHITE, alpha=pl); y += 60
     if it.get("source"):
-        text(ctx, "Source : " + it["source"], 126, yy + 6, "Inter", 30, GREY, italic=False, bold=True, alpha=pl)
+        text(ctx, "Source : " + it["source"], 126, y - 16, "Inter", 28, MUTE, italic=False, bold=True, alpha=pl)
     ticker(ctx, t, EP.get("ticker", "Abonnez-vous à LE 71 Flash News  •  L'actu de la Saône-et-Loire  •"))
-    wipe_in(ctx, t)
+    wipe_in(ctx, t); wipe_out(ctx, t, dur)
 
 def scene_meteo_carte(ctx, t, dur):
     mt = EP["meteo"]
-    rect(ctx, 0, 0, W, H, WHITE)
+    fond(ctx, t)
     header(ctx, t, "MÉTÉO")
     p = eback(prog(t, .2, .8))
     ctx.save(); ctx.translate(60, 330); ctx.scale(max(p, .01), max(p, .01))
-    text(ctx, "LA MÉTÉO", 0, 0, BLACK_F, 150, RED); text(ctx, "DE LA SEMAINE", 0, 136, BLACK_F, 120, RED); ctx.restore()
-    text(ctx, mt.get("periode", ""), 62, 540, XB_F, 54, INK, alpha=prog(t, .6, 1.0))
-    md = eo(prog(t, .8, 2.0)); mf = prog(t, 1.6, 2.2)
-    to_xy = draw_map(ctx, 70, 620, 940, md, mf, 6)
+    text(ctx, "LA MÉTÉO", 0, 0, BLACK_F, 150, WHITE); text(ctx, "DE LA SEMAINE", 0, 136, BLACK_F, 120, WHITE); ctx.restore()
+    font(ctx, XB_F, 50); pw_ = tw(ctx, mt.get("periode", "")) + 44; pa = eo(prog(t, .6, 1.0))
+    if mt.get("periode"):
+        skew_band(ctx, 70 - 300 * (1 - pa), 500, pw_, 70, RED); text(ctx, mt["periode"], 90 - 300 * (1 - pa), 552, XB_F, 50, WHITE)
+    to_xy = draw_map3d(ctx, 490, 1100, 880, t, eo(prog(t, .7, 1.7)), ky=.9, sway=False)
     for i, v in enumerate(mt["villes"]):
-        pp = eback(prog(t, 2.0 + i * .2, 2.4 + i * .2))
+        pp = eback(prog(t, 1.8 + i * .2, 2.2 + i * .2))
         if pp <= 0: continue
         x0, y0 = to_xy(*v["lonlat"])
         ctx.save(); ctx.translate(x0, y0); ctx.scale(pp, pp)
         wx_icon(ctx, 0, -46, 1.15, v["ciel"], t)
         lbl = v.get("label", v["nom"])
         font(ctx, "Inter", 28, False, True); lw = tw(ctx, lbl) + 20
-        rect(ctx, -lw / 2, 4, lw, 40, WHITE, .85)
-        text(ctx, lbl, 0, 34, "Inter", 28, INK, "c", italic=False, bold=True)
-        text(ctx, f"{v['tmax']}°", 0, 100, BLACK_F, 64, RED, "c")
+        rect(ctx, -lw / 2, 4, lw, 40, BG, .9)
+        text(ctx, lbl, 0, 34, "Inter", 28, WHITE, "c", italic=False, bold=True)
+        rect(ctx, -46, 50, 92, 62, RED); text(ctx, f"{v['tmax']}°", 4, 100, BLACK_F, 56, WHITE, "c")
         ctx.restore()
-    text(ctx, "Source : Météo-France · Présenté par Léa", 60, H - 120, "Inter", 30, GREY, italic=False, bold=True)
+    text(ctx, "Source : Météo-France · Présenté par Léa", 60, 1560, "Inter", 28, MUTE, italic=False, bold=True)
     rect(ctx, 0, H - 28, W, 28, RED)
-    wipe_in(ctx, t)
+    wipe_in(ctx, t); wipe_out(ctx, t, dur)
 
 def scene_meteo_semaine(ctx, t, dur):
     mt = EP["meteo"]
-    rect(ctx, 0, 0, W, H, WHITE)
+    fond(ctx, t)
     header(ctx, t, "MÉTÉO")
-    text(ctx, "JOUR PAR JOUR", 60, 300, BLACK_F, 120, RED)
-    text(ctx, "Températures max / min en Saône-et-Loire", 62, 370, "Inter", 34, GREY, italic=False, bold=True)
+    text(ctx, "JOUR PAR JOUR", 60, 300, BLACK_F, 120, WHITE)
+    text(ctx, "Températures max / min en Saône-et-Loire", 62, 370, "Inter", 32, MUTE, italic=False, bold=True)
     days = mt["jours"]; n = len(days)
-    rh = (H - 560) / n
+    rh = (SAFE_B - 430) / n; RW = SAFE_R - 60
     for i, d in enumerate(days):
         rp = eo(prog(t, .5 + i * .25, .9 + i * .25))
         if rp <= 0: continue
         y = 430 + i * rh; dx = 200 * (1 - rp)
-        rect(ctx, 60 + dx, y, 960, rh - 16, PINK if i % 2 == 0 else LIGHT, rp)
-        text(ctx, d["jour"].upper(), 90 + dx, y + rh / 2 + 14, XB_F, 54, INK, alpha=rp)
-        ctx.save(); ctx.translate(dx, 0); wx_icon(ctx, 470, y + rh / 2 - 8, 1.25, d["ciel"], t); ctx.restore()
-        text(ctx, f"{d['tmax']}°", 820 + dx, y + rh / 2 + 22, BLACK_F, 76, RED, "r", alpha=rp)
-        text(ctx, f"{d['tmin']}°", 990 + dx, y + rh / 2 + 18, BLACK_F, 56, GREY, "r", alpha=rp)
+        rect(ctx, 60 + dx, y, RW, rh - 14, BG2 if i % 2 == 0 else (.14, .155, .2), rp); rect(ctx, 60 + dx, y, 10, rh - 14, RED, rp)
+        text(ctx, d["jour"].upper(), 96 + dx, y + rh / 2 + 12, XB_F, 54, WHITE, alpha=rp)
+        ctx.save(); ctx.translate(dx, 0); wx_icon(ctx, 470, y + rh / 2 - 12, 1.2, d["ciel"], t); ctx.restore()
+        text(ctx, f"{d['tmax']}°", 740 + dx, y + rh / 2 + 20, BLACK_F, 76, WHITE, "r", alpha=rp)
+        text(ctx, f"{d['tmin']}°", 890 + dx, y + rh / 2 + 16, BLACK_F, 56, MUTE, "r", alpha=rp)
     rect(ctx, 0, H - 28, W, 28, RED)
-    wipe_in(ctx, t)
+    wipe_in(ctx, t); wipe_out(ctx, t, dur)
 
 def scene_fin(ctx, t, dur):
-    rect(ctx, 0, 0, W, H, WHITE)
+    fond(ctx, t)
     rect(ctx, 0, 0, W * eio(prog(t, 0, .5)), 28, RED)
+    CX = (60 + SAFE_R) / 2 + 25
     p = prog(t, .1, .6); s = 1.6 - .6 * eo(p)
     ctx.save(); ctx.translate(W / 2, 520); ctx.scale(s, s)
     text(ctx, "LE 71", 0, 0, BLACK_F, 290, RED, "c", alpha=p)
@@ -970,33 +1087,30 @@ def scene_fin(ctx, t, dur):
     q = eo(prog(t, .7, 1.2))
     nxt = {"matin": "Rendez-vous ce soir à 20h !", "soir": "Rendez-vous demain matin !", "meteo": "Bonne semaine à tous !", "special": "Rendez-vous au prochain flash !", "alerte": "Restez prudents. Plus d'infos dans nos flashs."}[EP["format"]]
     if EP.get("question"):
-        lines = wrap(ctx, EP["question"], XB_F, 70, 900)[:2]
+        lines = wrap(ctx, EP["question"], XB_F, 70, SAFE_R - 150)[:2]
         bh = 100 + 76 * len(lines); top = 690 + 40 * (1 - q)
-        rect(ctx, 80, top, 920, bh, PINK, q)
+        rect(ctx, 80, top, SAFE_R - 60, bh, BG2, q); rect(ctx, 80, top, 12, bh, RED, q)
         for i, ln in enumerate(lines):
-            text(ctx, ln, W / 2, top + 76 + i * 76, XB_F, 70, INK, "c", alpha=q)
-        text(ctx, "Répondez en commentaire", W / 2, top + bh - 26, "Inter", 32, RED, "c", italic=False, bold=True, alpha=q)
+            text(ctx, ln, CX, top + 76 + i * 76, XB_F, 70, WHITE, "c", alpha=q)
+        text(ctx, "Répondez en commentaire", CX, top + bh - 26, "Inter", 32, MUTE, "c", italic=False, bold=True, alpha=q)
     else:
-        text(ctx, "Toute l'actu du 71,", W / 2, 790 + 40 * (1 - q), XB_F, 86, INK, "c", alpha=q)
-        text(ctx, "près de chez vous.", W / 2, 880 + 40 * (1 - q), XB_F, 86, INK, "c", alpha=q)
+        text(ctx, "Toute l'actu du 71,", CX, 790 + 40 * (1 - q), XB_F, 86, WHITE, "c", alpha=q)
+        text(ctx, "près de chez vous.", CX, 880 + 40 * (1 - q), XB_F, 86, WHITE, "c", alpha=q)
     b = eo(prog(t, 1.1, 1.6)); bounce = abs(math.sin(t * math.pi)) * 16
-    by = 960 + 60 * (1 - b) - bounce
-    rect(ctx, 100, by, 880, 128, RED, b)
-    text(ctx, "Abonnez-vous", W / 2 + 30, by + 84, "Inter", 52, WHITE, "c", italic=False, bold=True, alpha=b)
-    ix = 300; iy = by + 64
+    by = 980 + 60 * (1 - b) - bounce
+    rect(ctx, 80, by, SAFE_R - 60, 128, RED, b)
+    text(ctx, "Abonnez-vous", CX + 30, by + 84, "Inter", 52, WHITE, "c", italic=False, bold=True, alpha=b)
+    ix = CX - 210; iy = by + 64
     ctx.new_path(); ctx.set_source_rgba(1, 1, 1, b); ctx.set_line_width(6); ctx.arc(ix, iy - 14, 14, 0, 2 * math.pi); ctx.stroke()
     ctx.new_path(); ctx.arc(ix, iy + 30, 26, math.pi * 1.15, math.pi * 1.85); ctx.stroke()
-    c = eo(prog(t, 1.3, 1.8)); cy = 1120 + 60 * (1 - c)
-    ctx.new_path(); ctx.set_source_rgba(*RED, c); ctx.set_line_width(7); ctx.rectangle(100, cy, 880, 116); ctx.stroke()
-    text(ctx, "Partagez autour de vous", W / 2, cy + 76, "Inter", 46, RED, "c", italic=False, bold=True, alpha=c)
-    text(ctx, nxt, W / 2, 1320, "Inter", 38, GREY, "c", italic=False, bold=True, alpha=prog(t, 1.8, 2.3))
-    street(ctx, t, H - 520)
+    c = eo(prog(t, 1.3, 1.8)); cy = 1140 + 60 * (1 - c)
+    ctx.new_path(); ctx.set_source_rgba(1, 1, 1, c); ctx.set_line_width(6); ctx.rectangle(80, cy, SAFE_R - 60, 116); ctx.stroke()
+    text(ctx, "Partagez autour de vous", CX, cy + 76, "Inter", 46, WHITE, "c", italic=False, bold=True, alpha=c)
+    text(ctx, nxt, CX, 1340, "Inter", 38, MUTE, "c", italic=False, bold=True, alpha=prog(t, 1.8, 2.3))
+    street(ctx, t, H - 520); rect(ctx, 0, H - 520, W, 520, BG, .55)
     rect(ctx, 0, H - 28, W * eio(prog(t, 0, .5)), 28, RED)
+    wipe_in(ctx, t)
 
-# ---------- couverture (image fixe = 1re image de la vidéo) ----------
-# Sur la grille du profil TikTok, la couverture est recadrée en 3:4 : seule la bande y 240 → 1680 est visible,
-# et le compteur de vues s'affiche en blanc, en bas à gauche de cette bande.
-# Règles : tout l'essentiel entre SAFE_TOP et SAFE_BOT ; bande sombre SANS TEXTE à gauche sous VUES_Y.
 SAFE_TOP, SAFE_BOT, VUES_Y, VUES_W = 240, 1680, 1500, 440
 
 def _fit(ctx, s, fam, size, maxw, maxlines, mini):
@@ -1044,7 +1158,7 @@ def scene_couverture(ctx, t=0, dur=0):
     titre = cv.get("titre") or (it.get("title") if alerte else EP.get("accroche")) or it.get("short") or it.get("title") \
         or EP.get("meteo", {}).get("periode", "") or f["sub"]
     lieu = cv.get("lieu", it.get("commune", "Saône-et-Loire"))
-    rect(ctx, 0, 0, W, H, WHITE)
+    rect(ctx, 0, 0, W, H, BG)
     # 1. bandeau du rendez-vous, plus discret que le titre (visible dans la grille à partir de y=240)
     BAN = 440
     rect(ctx, 0, 0, W, BAN, RED)
@@ -1076,7 +1190,7 @@ def scene_couverture(ctx, t=0, dur=0):
     lh, cap = size * .94, size * .70
     y = top + (bot - top - ((len(ls) - 1) * lh + cap)) / 2 + cap
     for ln in ls:
-        text(ctx, ln, W / 2, y, BLACK_F, size, INK, "c"); y += lh
+        text(ctx, ln, W / 2, y, BLACK_F, size, WHITE, "c"); y += lh
     # 4. bande sombre : à gauche, RIEN (le compteur de vues TikTok s'y pose) ; à droite, le lieu et la date
     rect(ctx, 0, VUES_Y, W, H - VUES_Y, INK)
     rect(ctx, 0, VUES_Y, W, 10, RED)
@@ -1172,6 +1286,19 @@ def main():
         w = wave.open(wav); sr = w.getframerate(); arr = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16); w.close()
         seg = np.zeros(int(round(durs[k] * sr)), dtype=np.int16); lead = int(.15 * sr); seg[lead:lead + len(arr)] = arr[:len(seg) - lead]; audio.append(seg)
     audio = [np.zeros(int(round(durs[k] * sr)), dtype=np.int16) if seg is None else seg for (k, *_), seg in zip(sc, audio)]
+    mix = np.concatenate(audio).astype(np.float32)
+    if EP.get("son_transitions", True):
+        rng = np.random.default_rng(71); L = int(.5 * sr); x = np.arange(L) / sr
+        noise = np.convolve(rng.standard_normal(L + 40), np.ones(40) / 40, "valid")[:L]
+        env = np.where(x < .25, (x / .25) ** 2, np.exp(-(x - .25) * 14))
+        souffle = noise / np.abs(noise).max() * env * 2600 + np.sin(2 * np.pi * 62 * x) * np.exp(-np.clip(x - .25, 0, None) * 16) * (x >= .25) * 3000
+        tc = 0.0
+        for k, *_ in sc[:-1]:
+            tc += durs[k]
+            if k == "couverture": continue
+            i0 = int((tc - .25) * sr)
+            if i0 > 0 and i0 + L < len(mix): mix[i0:i0 + L] += souffle
+    audio = [np.clip(mix, -32000, 32000).astype(np.int16)]
     o = wave.open(os.path.join(work, "voix.wav"), "wb"); o.setnchannels(1); o.setsampwidth(2); o.setframerate(sr); o.writeframes(np.concatenate(audio).tobytes()); o.close()
     if a.stills:
         os.makedirs(a.stills, exist_ok=True)
