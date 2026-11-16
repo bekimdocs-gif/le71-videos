@@ -859,6 +859,11 @@ def diction(s):
     """Léa ne lit jamais « 20h » : on écrit les heures en toutes lettres pour la synthèse."""
     s = _re.sub(r"\b(\d{1,2})\s?[hH]\s?(\d{2})\b", lambda m: f"{int(m.group(1))} heures {int(m.group(2))}", s)
     s = _re.sub(r"\b(\d{1,2})\s?[hH]\b", lambda m: f"{int(m.group(1))} heure" + ("" if int(m.group(1)) == 1 else "s"), s)
+    # sigles épelés lettre par lettre (la synthèse lit « RCEA » comme un mot anglais)
+    for sig in ("RCEA", "SNCF", "TGV", "TER", "SDIS", "CHU", "EDF", "RN"):
+        s = _re.sub(rf"\b{sig}\b", " ".join(sig), s)
+    s = _re.sub(r"\bR\.\s?C\.\s?E\.\s?A\.?", "R C E A", s)
+    s = _re.sub(r"\bA\s?(\d{1,2})\b", r"A \1", s)
     return s
 
 def tts(textv, out):

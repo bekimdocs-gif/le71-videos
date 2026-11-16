@@ -1,0 +1,101 @@
+{
+ "format": "special",
+ "titre": [
+  "LE 71",
+  "EXPLIQUÉ"
+ ],
+ "sous_titre": "Tout comprendre de la Saône-et-Loire",
+ "date_label": "Nov. 2026",
+ "voice_speed": 0.98,
+ "accroche": "550 310 habitants, 563 communes",
+ "accroche_tag": "LE 71 EXPLIQUÉ",
+ "question": "Votre ville préférée du 71 ?",
+ "ticker": "Le 71 expliqué  •  Tout comprendre de la Saône-et-Loire  •  Abonnez-vous à LE 71 Flash News  •",
+ "voix": {
+  "intro": "Cinq cent cinquante mille habitants, cinq cent soixante-trois communes : c'est la Saône-et-Loire. Salut, je suis Léa, et aujourd'hui, je vous explique notre département.",
+  "sommaire": "Au programme : le territoire, les villes, l'économie, les atouts et le sport.",
+  "fin": "Et vous, quelle est votre ville préférée du 71 ? Dites-le en commentaire. Abonnez-vous à LE 71, et partagez cette vidéo autour de vous !"
+ },
+ "items": [
+  {
+   "tag": "TERRITOIRE",
+   "band": "INSEE · DÉC. 2025",
+   "short": "563 communes, 550 310 habitants",
+   "title": "Le plus peuplé de la région",
+   "desc": "Entre la Saône à l'est et la Loire à l'ouest. 1er de Bourgogne-Franche-Comté, 7e de France en superficie.",
+   "place": "Préfecture : Mâcon",
+   "commune": "Mâcon",
+   "theme": "mairie",
+   "source": "Insee",
+   "voix": "Notre département tient son nom de deux rivières : la Saône à l'est, la Loire à l'ouest. C'est le plus peuplé de Bourgogne-Franche-Comté, et le septième de France par sa superficie. Préfecture : Mâcon. Sous-préfectures : Autun, Chalon-sur-Saône, Charolles et Louhans.",
+   "lonlat": [
+    4.828,
+    46.307
+   ]
+  },
+  {
+   "tag": "VILLES",
+   "band": "LES INCONTOURNABLES",
+   "short": "Des villes emblématiques",
+   "title": "Chalon, Mâcon, Autun, Cluny…",
+   "desc": "Chalon, berceau de la photo. Le Creusot et Montceau, le bassin minier. Cluny et Paray, l'art roman.",
+   "place": "Autun, la ville romaine",
+   "commune": "Autun",
+   "theme": "culture",
+   "source": "LE 71",
+   "voix": "Chalon-sur-Saône, la plus grande ville, a vu naître Nicéphore Niépce, l'inventeur de la photographie. Mâcon est la ville de Lamartine. Le Creusot et Montceau-les-Mines forment le bassin industriel et minier. Autun garde son théâtre romain, et Cluny et Paray-le-Monial sont des joyaux de l'art roman.",
+   "lonlat": [
+    4.299,
+    46.951
+   ]
+  },
+  {
+   "tag": "ÉCONOMIE",
+   "band": "32 000 SALARIÉS",
+   "short": "Une terre d'industrie",
+   "title": "L'industrie, un quart des emplois",
+   "desc": "1 emploi salarié sur 4, le nucléaire en pointe. Charolais, vins du Mâconnais, volaille de Bresse.",
+   "place": "Le Creusot",
+   "commune": "Le Creusot",
+   "theme": "economie",
+   "source": "Insee",
+   "voix": "L'industrie pèse lourd : près de trente-deux mille salariés, soit un emploi salarié sur quatre, avec le nucléaire comme secteur de pointe. L'agriculture compte aussi : la vache charolaise, les vins du Mâconnais et de la Côte chalonnaise, et la volaille de Bresse.",
+   "lonlat": [
+    4.424,
+    46.801
+   ]
+  },
+  {
+   "tag": "ATOUTS",
+   "band": "A6 · RCEA · 2 GARES TGV",
+   "short": "Un carrefour",
+   "title": "Un carrefour au cœur de la France",
+   "desc": "A6 du nord au sud, RCEA d'est en ouest, gares TGV du Creusot et de Mâcon-Loché.",
+   "place": "Cluny",
+   "commune": "Cluny",
+   "theme": "route",
+   "source": "Insee",
+   "voix": "Le département est un carrefour : l'A6 du nord au sud, la RCEA d'est en ouest, et deux gares TGV, au Creusot et à Mâcon-Loché. L'axe Mâcon-Chalon est le plus dynamique, porté par la proximité de Lyon. Le tourisme, lui, mise sur Solutré, Cluny, les vignobles et les voies vertes.",
+   "lonlat": [
+    4.659,
+    46.434
+   ]
+  },
+  {
+   "tag": "SPORT",
+   "band": "BETCLIC ÉLITE",
+   "short": "L'Élan Chalon",
+   "title": "L'Élan Chalon, le club phare",
+   "desc": "Le basket chalonnais en Betclic Élite et en FIBA Europe Cup cette saison.",
+   "place": "Le Colisée, Chalon-sur-Saône",
+   "commune": "Chalon-sur-Saône",
+   "theme": "sport",
+   "source": "LNB",
+   "voix": "Côté sport, le club phare, c'est l'Élan Chalon : le basket chalonnais joue en première division, la Betclic Élite, et dispute la FIBA Europe Cup cette saison.",
+   "lonlat": [
+    4.853,
+    46.781
+   ]
+  }
+ ]
+}
