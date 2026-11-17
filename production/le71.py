@@ -1038,10 +1038,33 @@ def scene_meteo_carte(ctx, t, dur):
     if mt.get("periode"):
         skew_band(ctx, 70 - 300 * (1 - pa), 500, pw_, 70, RED); text(ctx, mt["periode"], 90 - 300 * (1 - pa), 552, XB_F, 50, WHITE)
     to_xy = draw_map3d(ctx, 490, 1100, 880, t, eo(prog(t, .7, 1.7)), ky=.9, sway=False)
+    # Placement des étiquettes : position réelle de la ville, puis écartement automatique
+    # des étiquettes qui se chevauchent (Digoin/Paray, Autun/Montceau…), avec un trait de rappel.
+    anc = [to_xy(*v["lonlat"]) for v in mt["villes"]]
+    pos = [[x + v.get("decal", [0, 0])[0], y + v.get("decal", [0, 0])[1]] for (x, y), v in zip(anc, mt["villes"])]
+    BW, BH = 140, 220
+    for _ in range(80):
+        moved = False
+        for a in range(len(pos)):
+            for b in range(a + 1, len(pos)):
+                dx = pos[b][0] - pos[a][0]; dy = pos[b][1] - pos[a][1]
+                ox = BW - abs(dx); oy = BH - abs(dy)
+                if ox > 0 and oy > 0:
+                    moved = True
+                    if ox * 1.6 < oy or abs(dx) > abs(dy):
+                        s_ = (1 if dx >= 0 else -1) * (ox / 2 + 2); pos[a][0] -= s_; pos[b][0] += s_
+                    else:
+                        s_ = (1 if dy >= 0 else -1) * (oy / 2 + 2); pos[a][1] -= s_; pos[b][1] += s_
+        for q in pos: q[0] = min(max(q[0], 90), W - 90)
+        if not moved: break
     for i, v in enumerate(mt["villes"]):
         pp = eback(prog(t, 1.8 + i * .2, 2.2 + i * .2))
         if pp <= 0: continue
-        x0, y0 = to_xy(*v["lonlat"])
+        (ax, ay), (x0, y0) = anc[i], pos[i]
+        if abs(x0 - ax) + abs(y0 - ay) > 12:
+            ctx.save(); ctx.set_source_rgba(1, 1, 1, .85 * min(pp, 1)); ctx.set_line_width(4)
+            ctx.move_to(ax, ay); ctx.line_to(x0, y0 + 4); ctx.stroke()
+            ctx.set_source_rgba(*RED, min(pp, 1)); ctx.arc(ax, ay, 10, 0, 6.2832); ctx.fill(); ctx.restore()
         ctx.save(); ctx.translate(x0, y0); ctx.scale(pp, pp)
         wx_icon(ctx, 0, -46, 1.15, v["ciel"], t)
         lbl = v.get("label", v["nom"])
