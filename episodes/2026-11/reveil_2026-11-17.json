@@ -1,0 +1,106 @@
+{
+ "format": "matin",
+ "date_label": "Mar. 17 nov.",
+ "voice_speed": 1.05,
+ "accroche": "Pluie, vent et douceur ce mardi",
+ "question": "Vous allez au Colisée ce soir ?",
+ "ticker": "Le Réveil 71  •  L'actu pour bien commencer la journée  •  Abonnez-vous à LE 71 Flash News  •",
+ "voix": {
+  "intro": "Pluie, vent et douceur ce mardi en Saône-et-Loire. Salut, je suis Léa, voici le Réveil 71.",
+  "sommaire": "Au sommaire ce matin : la météo du jour, l'Élan Chalon en Coupe d'Europe et deux conférences sur l'histoire Schneider.",
+  "meteo": "Ciel gris toute la journée, avec bruine et quelques pluies. Mais il fait doux : jusqu'à 17 degrés à Chalon, 15 au Creusot, 14 à Mâcon. Vent du sud, rafales jusqu'à 50 kilomètres heure. Prudence sur les routes mouillées.",
+  "fin": "Et vous, vous allez au Colisée ce soir ? Dites-le en commentaire. C'était le Réveil 71. Abonnez-vous, partagez autour de vous… et rendez-vous ce soir à 20 heures !"
+ },
+ "sommaire_items": [
+  {
+   "tag": "MÉTÉO",
+   "short": "Pluie, vent et douceur",
+   "title": "Pluie, vent et douceur"
+  },
+  {
+   "tag": "CHALON",
+   "short": "L'Élan Chalon en Coupe d'Europe",
+   "title": "L'Élan Chalon en Coupe d'Europe"
+  },
+  {
+   "tag": "CREUSOT",
+   "short": "L'histoire Schneider en conférences",
+   "title": "L'histoire Schneider en conférences"
+  }
+ ],
+ "meteo": {
+  "titre1": "LA MÉTÉO",
+  "titre2": "DU JOUR",
+  "periode": "Mardi 17 novembre · températures max.",
+  "source": "Ouest-France Météo",
+  "villes": [
+   {
+    "nom": "Le Creusot",
+    "label": "Le Creusot",
+    "ciel": "pluie",
+    "tmax": 15,
+    "lonlat": [
+     4.424,
+     46.801
+    ]
+   },
+   {
+    "nom": "Chalon-sur-Saône",
+    "label": "Chalon",
+    "ciel": "pluie",
+    "tmax": 17,
+    "lonlat": [
+     4.853,
+     46.781
+    ]
+   },
+   {
+    "nom": "Mâcon",
+    "ciel": "pluie",
+    "tmax": 14,
+    "lonlat": [
+     4.828,
+     46.307
+    ]
+   }
+  ]
+ },
+ "items": [
+  {
+   "tag": "CHALON",
+   "band": "CE SOIR · 20H",
+   "short": "L'Élan Chalon en Coupe d'Europe",
+   "title": "L'Élan Chalon reçoit Manisa ce soir",
+   "desc": "FIBA Europe Cup, à 20h au Colisée.",
+   "place": "Le Colisée, Chalon-sur-Saône",
+   "commune": "Chalon-sur-Saône",
+   "theme": "basket",
+   "source": "Montceau News",
+   "voix": "Direction Chalon-sur-Saône. Soirée européenne au Colisée : l'Élan reçoit Manisa ce soir à 20 heures, en FIBA Europe Cup.",
+   "lonlat": [
+    4.853,
+    46.781
+   ]
+  },
+  {
+   "tag": "CREUSOT",
+   "band": "CE SOIR · 18H30",
+   "short": "L'histoire Schneider en conférences",
+   "title": "L'histoire Schneider racontée ce soir",
+   "desc": "Deux conférences gratuites, à 18h30.",
+   "place": "Académie François Bourdon, Le Creusot",
+   "commune": "Le Creusot",
+   "theme": "culture",
+   "source": "eterritoire.fr · Unidivers",
+   "voix": "On file au Creusot. Ce soir à 18 heures 30, conférence gratuite à l'Académie François Bourdon : de Schneider à Schneider Electric. Et à Montchanin, au château de la Verrerie, on parle des cantines ouvrières du Creusot.",
+   "lonlat": [
+    4.424,
+    46.801
+   ]
+  }
+ ],
+ "couverture": {
+  "photo": "cover_meteo.png",
+  "lieu": "Saône-et-Loire"
+ }
+}

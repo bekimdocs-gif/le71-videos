@@ -805,7 +805,7 @@ def scene_ouverture(ctx, t, dur):
     text(ctx, f["sub"], 62, y - 60, XB_F, 54, INK, alpha=prog(t, .6, 1.0))
     y += 10
     text(ctx, "AU SOMMAIRE", 62, y, "Inter", 30, GREY, italic=False, bold=True, alpha=prog(t, .8, 1.1)); y += 30
-    items = EP["items"]
+    items = EP.get("sommaire_items") or EP["items"]
     for i, it in enumerate(items):
         rp = eo(prog(t, 1.0 + i * .35, 1.4 + i * .35))
         if rp <= 0: y += 116; continue
@@ -824,7 +824,7 @@ def scene_ouverture(ctx, t, dur):
     md = eo(prog(t, .8, 1.8)); mf = prog(t, 1.4, 2.0)
     to_xy = draw_map(ctx, mx, top, mw, md, mf, 5)
     seen, placed, k = set(), [], 0
-    for it in items:
+    for it in EP["items"]:
         lbl = it.get("label_carte", it["commune"])
         if lbl in seen: continue
         seen.add(lbl)
@@ -918,7 +918,7 @@ def scene_meteo_carte(ctx, t, dur):
     header(ctx, t, "MÉTÉO")
     p = eback(prog(t, .2, .8))
     ctx.save(); ctx.translate(60, 330); ctx.scale(max(p, .01), max(p, .01))
-    text(ctx, "LA MÉTÉO", 0, 0, BLACK_F, 150, RED); text(ctx, "DE LA SEMAINE", 0, 136, BLACK_F, 120, RED); ctx.restore()
+    text(ctx, mt.get("titre1", "LA MÉTÉO"), 0, 0, BLACK_F, 150, RED); text(ctx, mt.get("titre2", "DE LA SEMAINE"), 0, 136, BLACK_F, 120, RED); ctx.restore()
     text(ctx, mt.get("periode", ""), 62, 540, XB_F, 54, INK, alpha=prog(t, .6, 1.0))
     md = eo(prog(t, .8, 2.0)); mf = prog(t, 1.6, 2.2)
     to_xy = draw_map(ctx, 70, 620, 940, md, mf, 6)
@@ -934,7 +934,7 @@ def scene_meteo_carte(ctx, t, dur):
         text(ctx, lbl, 0, 34, "Inter", 28, INK, "c", italic=False, bold=True)
         text(ctx, f"{v['tmax']}°", 0, 100, BLACK_F, 64, RED, "c")
         ctx.restore()
-    text(ctx, "Source : Météo-France · Présenté par Léa", 60, H - 120, "Inter", 30, GREY, italic=False, bold=True)
+    text(ctx, "Source : " + mt.get("source", "Météo-France") + " · Présenté par Léa", 60, H - 120, "Inter", 30, GREY, italic=False, bold=True)
     rect(ctx, 0, H - 28, W, 28, RED)
     wipe_in(ctx, t)
 
@@ -1131,6 +1131,8 @@ def _plan():
         sc.append(("semaine", scene_meteo_semaine, EP["voix"]["semaine"], .3))
     else:
         sc.append(("ouverture", scene_ouverture, EP["voix"]["sommaire"], .3))
+        if EP.get("meteo") and EP["voix"].get("meteo"):
+            sc.append(("meteo_jour", scene_meteo_carte, EP["voix"]["meteo"], .3))
         n = len(EP["items"])
         for i, it in enumerate(EP["items"]):
             sc.append((f"sujet{i+1}", (lambda it, i: (lambda c, t, d: scene_item(c, t, d, it, i + 1, n)))(it, i), it["voix"], .25))
@@ -1156,7 +1158,7 @@ def main():
     a = ap.parse_args()
     EP = json.load(open(a.episode))
     for it in EP.get("items", []): it.setdefault("lonlat", locate(it["commune"]))
-    if EP["format"] == "meteo":
+    if EP.get("meteo"):
         for v in EP["meteo"]["villes"]: v.setdefault("lonlat", locate(v["nom"]))
     json.dump(EP, open(a.episode, "w"), ensure_ascii=False, indent=1)
     if a.cover:
