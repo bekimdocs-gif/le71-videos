@@ -6,7 +6,8 @@ Bible de la rédaction et de la production. Toute session (manuelle ou programm�
 
 - **Média** : LE 71 Flash News — actualité locale de la Saône-et-Loire, vidéos verticales 9:16 pour TikTok (@flashnews71000).
 - **Présentatrice** : **Léa**, journaliste en Saône-et-Loire. Voix douce, posée, professionnelle, bien articulée. Sympathique et proche, jamais familière. Elle vouvoie (« vous »).
-- **Charte** : rouge (#D90F23) sur fond blanc, titres Barlow Condensed italique, textes Inter. Le générique « LE 71 · FLASH NEWS · SAÔNE-ET-LOIRE » ouvre TOUJOURS la vidéo, identique d'une vidéo à l'autre.
+- **Charte (depuis le 17 nov. 2026) : mise en page « sombre »**, mélange des deux premières présentations. Fond sombre sur toute la vidéo (les boutons TikTok — j'aime, commentaires, partages — restent lisibles) ; transitions « breaking news » (volet rouge en biais avec le logo LE 71) entre chaque partie ; carte du 71 en 3D, grande, sur chaque sujet (repère sur la commune ~3 s, puis l'illustration) et au sommaire ; titres en blanc, rouge réservé aux bandeaux et mots forts ; aucun texte dans la colonne de droite (x > 920, y 850→1560) ni sous y 1565 (légende TikTok) ; météo, écran de fin et couverture en sombre. Titres Barlow Condensed italique, textes Inter. Le générique « LE 71 · FLASH NEWS · SAÔNE-ET-LOIRE » ouvre TOUJOURS la vidéo, identique d'une vidéo à l'autre. L'ancienne charte rouge sur fond blanc n'est plus utilisée.
+- **Météo du jour dans le Réveil 71** (facultatif) : ajouter à l'épisode `"meteo": {"titre1": "LA MÉTÉO", "titre2": "DU JOUR", "periode": "…", "source": "…", "villes": [...]}` et `voix.meteo` ; la page s'insère après le sommaire. `sommaire_items` (liste de {tag, short}) permet d'afficher la météo dans le sommaire.
 - Canevas de la charte : https://claude.ai/artifact/PNPySHBQ7XZv1Wv7jSh9a8
 
 ## 2. Les rendez-vous
