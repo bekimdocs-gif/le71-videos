@@ -1,0 +1,60 @@
+{
+ "format": "special",
+ "titre": [
+  "VOTRE PUB",
+  "SUR LE 71"
+ ],
+ "sous_titre": "Votre commerce mérite d'être vu !",
+ "date_label": "Nov. 2026",
+ "accroche": "Votre commerce mérite d'être vu",
+ "accroche_tag": "ANNONCE",
+ "question": "Un commerce à faire connaître ?",
+ "ticker": "Flash News 71  •  Votre pub sur LE 71  •  Contactez-nous en message privé  •",
+ "couverture": {
+  "titre": "Votre commerce mérite d'être vu !",
+  "lieu": "Saône-et-Loire"
+ },
+ "voix": {
+  "intro": "Votre commerce mérite d'être vu ! Salut, je suis Léa, de Flash News 71.",
+  "sommaire": "Vous êtes commerçant, artisan ou entrepreneur en Saône-et-Loire ? Cette vidéo est pour vous.",
+  "fin": "Intéressé ? Contactez Flash News 71 en message privé, et donnons ensemble de la visibilité à votre commerce !"
+ },
+ "items": [
+  {
+   "tag": "POUR VOUS",
+   "band": "COMMERÇANTS · ARTISANS",
+   "short": "Faites-vous connaître",
+   "title": "Ouverture, promo, nouveauté ?",
+   "desc": "Faites découvrir votre établissement à toute la Saône-et-Loire.",
+   "place": "Partout dans le 71",
+   "commune": "Chalon-sur-Saône",
+   "theme": "marche",
+   "source": "Flash News 71",
+   "voix": "Vous souhaitez faire découvrir votre établissement, annoncer une ouverture, ou mettre en avant une promotion ? On s'en occupe."
+  },
+  {
+   "tag": "AUDIENCE",
+   "band": "EN 5 JOURS",
+   "short": "Près de 100 000 vues",
+   "title": "Près de 100 000 vues en 5 jours",
+   "desc": "Et déjà plus de 1 500 abonnés, partout en Saône-et-Loire.",
+   "place": "Sur TikTok",
+   "commune": "Mâcon",
+   "theme": "generic",
+   "source": "Statistiques TikTok",
+   "voix": "Flash News 71, c'est déjà près de cent mille vues, et plus de mille cinq cents abonnés, en seulement cinq jours."
+  },
+  {
+   "tag": "L'OFFRE",
+   "band": "VIDÉOS SUR MESURE",
+   "short": "Des offres pour tous",
+   "title": "Votre vidéo publicitaire personnalisée",
+   "desc": "Des offres accessibles à tout le monde.",
+   "place": "Contact : message privé",
+   "commune": "Montceau-les-Mines",
+   "theme": "batiment",
+   "source": "Flash News 71",
+   "voix": "Nous vous proposons des vidéos publicitaires personnalisées, pour valoriser votre activité auprès de notre communauté. Et nos offres sont accessibles à tout le monde !"
+  }
+ ]
+}

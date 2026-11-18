@@ -1247,14 +1247,23 @@ def scene_couverture(ctx, t=0, dur=0):
 VOICE = os.environ.get("LE71_VOICE", os.path.join(HERE, "voice", "fr_FR-siwis-medium.onnx"))
 
 import re as _re
+# Prononciation : nom tel qu'écrit -> orthographe lue par la synthèse (à compléter si un nom est mal dit).
+# Un épisode peut ajouter ses propres corrections : "prononciation": {"Nom": "Lecture"}.
+PRONONCIATION = {}
+
 def diction(s):
     """Léa ne lit jamais « 20h » : on écrit les heures en toutes lettres pour la synthèse."""
+    for nom, lu in {**PRONONCIATION, **(EP.get("prononciation") or {})}.items():
+        s = _re.sub(rf"(?<![\w-]){_re.escape(nom)}(?![\w-])", lu, s)
     s = _re.sub(r"\b(\d{1,2})\s?[hH]\s?(\d{2})\b", lambda m: f"{int(m.group(1))} heures {int(m.group(2))}", s)
     s = _re.sub(r"\b(\d{1,2})\s?[hH]\b", lambda m: f"{int(m.group(1))} heure" + ("" if int(m.group(1)) == 1 else "s"), s)
     # sigles épelés lettre par lettre (la synthèse lit « RCEA » comme un mot anglais)
     for sig in ("RCEA", "SNCF", "TGV", "TER", "SDIS", "CHU", "EDF", "RN"):
         s = _re.sub(rf"\b{sig}\b", " ".join(sig), s)
     s = _re.sub(r"\bR\.\s?C\.\s?E\.\s?A\.?", "R C E A", s)
+    s = s.replace("R C E A", "R. C. E. A.")                 # une petite pause entre chaque lettre : mieux articulé
+    s = _re.sub(r"(?<![\d])(?<!\d[,.])71(?!\d)(?![,.]\d)", "soixante et onze", s)   # « le 71 » était parfois entendu « 61 »
+    s = _re.sub(r"(?<=[^\W\d_])-(?=[^\W\d_])", " ", s)          # Paray-le-Monial -> Paray le Monial : chaque mot bien détaché
     s = _re.sub(r"\bA\s?(\d{1,2})\b", r"A \1", s)
     return s
 
@@ -1278,16 +1287,23 @@ def _lea_load():
     return _LEA["model"]
 
 def _tts_lea(textv, out):
-    import numpy as np
+    import numpy as np, hashlib
+    steps, speed = int(EP.get("lea_steps", 20)), float(EP.get("lea_speed", 0.85))
+    # cache : relancer un rendu (correction d'un titre, d'une image) ne recalcule pas la voix
+    key = hashlib.sha1(f"{textv}|{steps}|{speed}|{os.path.getsize(LEA_REF)}".encode()).hexdigest()
+    cache = os.path.join(os.path.expanduser("~"), ".cache", "le71_voix", key + ".wav")
+    if os.path.exists(cache):
+        shutil.copy(cache, out); return
     m = _lea_load()
     a = m.generate(text=textv, voice_clone_prompt=_LEA["prompt"],
-                   num_step=int(EP.get("lea_steps", 16)), speed=float(EP.get("lea_speed", 0.92)))[0]
+                   num_step=steps, speed=speed)[0]
     a = np.asarray(a, dtype=np.float32)
     nz = np.nonzero(np.abs(a) > 0.01)[0]                   # retire les silences de début/fin
     if len(nz): a = a[max(0, nz[0] - 240): nz[-1] + 2400]
     a = a / max(1e-6, float(np.abs(a).max())) * 0.75          # niveau constant d'une scène à l'autre
     w = wave.open(out, "wb"); w.setnchannels(1); w.setsampwidth(2); w.setframerate(LEA_SR)
     w.writeframes((a * 32767).astype(np.int16).tobytes()); w.close()
+    os.makedirs(os.path.dirname(cache), exist_ok=True); shutil.copy(out, cache)
 
 def _tts_piper(textv, out):
     raw = out[:-4] + ".piper.wav"
