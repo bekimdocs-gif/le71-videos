@@ -14,7 +14,7 @@ Bible de la rédaction et de la production. Toute session (manuelle ou programm�
 
 | Rendez-vous | Format moteur | Publication | Préparation | Contenu |
 |---|---|---|---|---|
-| **Le Réveil 71** (lun–sam) | `matin` | 8h30 | ~7h15 | Ce qui se passe AUJOURD'HUI (événements, travaux, circulation, grèves, marchés) + 1 fait marquant de la veille/nuit |
+| **Le Réveil 71** (lun–sam) | `matin` | 8h00 (depuis le 19 nov. 2026) | ~6h45 | Ce qui se passe AUJOURD'HUI (événements, travaux, circulation, grèves, marchés) + 1 fait marquant de la veille/nuit |
 | **Le 20h du 71** (lun–sam) | `soir` | 20h00 | ~18h45 | Bilan : les 2 ou 3 infos importantes de la journée dans le 71 |
 | **La météo de la semaine** (dimanche) | `meteo` | 18h30 | ~17h15 | Prévisions lundi→dimanche, carte des villes |
 
