@@ -12,7 +12,7 @@
  "voix": {
   "intro": "Vent et orages : la Saône-et-Loire en vigilance jaune ce mercredi. Salut, je suis Léa, voici le Réveil 71.",
   "sommaire": "Au sommaire ce matin : la vigilance météo et le temps du jour.",
-  "meteo": "Météo-France place le département en vigilance jaune pour le vent et les orages ce mercredi. Ciel couvert, et des températures douces : jusqu'à 16 degrés à Digoin et à Paray-le-Monial. Attention aux rafales sur la route, et rangez ce qui pourrait s'envoler.",
+  "meteo": "Météo-France place le département en vigilance jaune pour le vent et les orages ce mercredi. Ciel chargé, quelques averses, mais il fait doux : 16 degrés à Digoin, Paray et Mâcon, 15 à Chalon, 13 à Montceau et 12 à Autun. Attention aux rafales sur la route, et rangez ce qui pourrait s'envoler.",
   "fin": "Et chez vous, ça souffle fort ce matin ? Dites-le en commentaire. C'était le Réveil 71. Abonnez-vous, partagez autour de vous… et rendez-vous ce soir à 20 heures !"
  },
  "sommaire_items": [
@@ -31,7 +31,7 @@
   "titre1": "VIGILANCE",
   "titre2": "JAUNE",
   "periode": "Mercredi 18 novembre · vent et orages",
-  "source": "Météo-France · météo.fr",
+  "source": "Météo-France & sites météo",
   "villes": [
    {
     "nom": "Digoin",
@@ -50,6 +50,44 @@
     "lonlat": [
      4.12,
      46.451
+    ]
+   },
+   {
+    "nom": "Montceau-les-Mines",
+    "label": "Montceau",
+    "ciel": "pluie",
+    "tmax": 13,
+    "lonlat": [
+     4.366,
+     46.668
+    ]
+   },
+   {
+    "nom": "Autun",
+    "ciel": "pluie",
+    "tmax": 12,
+    "lonlat": [
+     4.299,
+     46.951
+    ]
+   },
+   {
+    "nom": "Chalon-sur-Saône",
+    "label": "Chalon",
+    "ciel": "nuages",
+    "tmax": 15,
+    "lonlat": [
+     4.853,
+     46.781
+    ]
+   },
+   {
+    "nom": "Mâcon",
+    "ciel": "eclaircies",
+    "tmax": 16,
+    "lonlat": [
+     4.828,
+     46.307
     ]
    }
   ]
