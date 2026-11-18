@@ -1,0 +1,59 @@
+{
+ "format": "special",
+ "date_label": "Dim. 22 nov.",
+ "voice_speed": 1.05,
+ "accroche": "Corrida du Père Noël à Gueugnon",
+ "question": "Vous courez déguisé dimanche ?",
+ "ticker": "Flash News 71  •  Corrida du Père Noël, dimanche 22 novembre à Gueugnon  •  Abonnez-vous à LE 71 Flash News  •",
+ "voix": {
+  "intro": "Dimanche, Gueugnon se met à l'heure du Père Noël. Salut, je suis Léa, voici votre Flash News.",
+  "sommaire": "Au programme : la Corrida du Père Noël et les courses des lutins.",
+  "fin": "Et vous, vous courez déguisé dimanche ? Dites-le en commentaire, et partagez à vos amis coureurs. Abonnez-vous à LE 71 Flash News !"
+ },
+ "sommaire_items": [
+  {
+   "tag": "DIM.",
+   "short": "La Corrida du Père Noël",
+   "title": "La Corrida du Père Noël"
+  },
+  {
+   "tag": "ENFANTS",
+   "short": "Les courses des lutins",
+   "title": "Les courses des lutins"
+  }
+ ],
+ "items": [
+  {
+   "tag": "GUEUGNON",
+   "band": "DIMANCHE 22 NOVEMBRE · 16H",
+   "short": "La Corrida du Père Noël",
+   "title": "9 km déguisés dans les rues de Gueugnon",
+   "desc": "Trois boucles de 3 km, centre-ville et bords de l'Arroux. 12 €.",
+   "place": "Place de l'Église, Gueugnon",
+   "commune": "Gueugnon",
+   "theme": "course",
+   "source": "Miles Republic",
+   "voix": "Direction Gueugnon, dimanche 22 novembre. La Corrida du Père Noël part à 16 heures de la place de l'Église. Neuf kilomètres, en trois boucles, dans le centre-ville et le long de l'Arroux. Ouverte dès 15 ans, pour 12 euros. Et les déguisements sont les bienvenus !",
+   "lonlat": [
+    4.063,
+    46.604
+   ]
+  },
+  {
+   "tag": "ENFANTS",
+   "band": "DIMANCHE · DÈS 13H30",
+   "short": "Les courses des lutins",
+   "title": "Quatre courses gratuites pour les enfants",
+   "desc": "De 300 m à 1 km, de 3 à 10 ans, à partir de 13 h 30.",
+   "place": "Place de l'Église, Gueugnon",
+   "commune": "Gueugnon",
+   "theme": "course",
+   "source": "Miles Republic",
+   "voix": "Les enfants aussi ont leur course. Quatre courses gratuites, de 3 à 10 ans, de 300 mètres à 1 kilomètre. Premier départ à 13 heures 30. Inscriptions en ligne jusqu'à dimanche midi, dossards sur place dès 12 heures 30.",
+   "lonlat": [
+    4.063,
+    46.604
+   ]
+  }
+ ]
+}

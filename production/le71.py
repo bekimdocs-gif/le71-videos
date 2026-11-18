@@ -601,6 +601,25 @@ def il_generic(ctx, t):
 ILL.update(route=il_route, secours=il_secours, mairie=il_mairie, economie=il_economie, campagne=il_campagne,
            sport=il_basket, culture=il_theatre, generic=il_generic)
 
+def il_course(ctx, t):
+    """course à pied en ville : coureurs (bonnets de Père Noël) qui défilent, arche d'arrivée"""
+    rect(ctx, 0, 0, PW, PH, WHITE)
+    ctx.save(); ctx.translate(0, PH - 520); street(ctx, t, 0); ctx.restore()
+    g = PH - 140
+    # arche d'arrivée
+    line(ctx, 690, g, 690, g - 330, RED, 16); line(ctx, 950, g, 950, g - 330, RED, 16)
+    rect(ctx, 670, g - 370, 300, 70, RED); text(ctx, "ARRIVÉE", 820, g - 320, BLACK_F, 52, WHITE, "c")
+    # coureurs
+    for i, (off, col, sc) in enumerate(((0, INK, 1.25), (260, RED, 1.15), (520, INK, 1.3), (780, RED, 1.2), (1040, INK, 1.1))):
+        x = ((t * 190 + off) % 1300) - 150
+        walker(ctx, x, g, sc, col, t + i * .13, 2.6, RED if col == INK else INK)
+        bob = abs(math.sin((t + i * .13) * 2.6 * 2 * math.pi)) * 3 * sc
+        hx, hy = x, g - bob - 104 * sc
+        poly(ctx, [(hx - 15 * sc, hy - 6 * sc), (hx + 15 * sc, hy - 6 * sc), (hx - 26 * sc, hy - 40 * sc)], RED)
+        rect(ctx, hx - 17 * sc, hy - 9 * sc, 34 * sc, 8 * sc, WHITE); circ(ctx, hx - 27 * sc, hy - 41 * sc, 6 * sc, WHITE)
+
+ILL.update(course=il_course, running=il_course, corrida=il_course)
+
 def il_batiment(ctx, t):
     """chantier : maison en construction, échafaudage, grue, artisan"""
     rect(ctx, 0, 0, PW, PH, (.98, .98, .98)); cloud(ctx, ((t * 26) % 1300) - 200, 90, 1)
