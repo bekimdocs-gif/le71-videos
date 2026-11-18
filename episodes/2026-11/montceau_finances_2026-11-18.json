@@ -1,0 +1,63 @@
+{
+ "format": "special",
+ "date_label": "Mer. 18 nov.",
+ "voice_speed": 1.05,
+ "accroche": "Montceau : le ton monte sur les finances",
+ "question": "Les finances de votre commune, ça vous intéresse ?",
+ "ticker": "Flash News 71  •  Montceau-les-Mines : passe d'armes après le rapport de la Chambre régionale des comptes  •  Abonnez-vous à LE 71 Flash News  •",
+ "couverture": {
+  "titre": "Montceau : le ton monte sur les finances",
+  "lieu": "Montceau-les-Mines"
+ },
+ "voix": {
+  "intro": "À Montceau-les-Mines, le ton monte autour des finances de la ville. Salut, je suis Léa, voici votre Flash News.",
+  "sommaire": "Au programme : le conseil municipal houleux, et les deux versions des faits.",
+  "fin": "Et vous, les finances de votre commune, ça vous intéresse ? Dites-le en commentaire. Abonnez-vous à LE 71 Flash News, et partagez autour de vous !"
+ },
+ "sommaire_items": [
+  {
+   "tag": "LUNDI",
+   "short": "Un conseil municipal houleux",
+   "title": "Un conseil municipal houleux"
+  },
+  {
+   "tag": "RÉACTIONS",
+   "short": "Les deux versions des faits",
+   "title": "Les deux versions des faits"
+  }
+ ],
+ "items": [
+  {
+   "tag": "MONTCEAU",
+   "band": "CONSEIL DU LUNDI 16 NOVEMBRE",
+   "short": "Un conseil municipal houleux",
+   "title": "Rapport des comptes : conseil municipal sous tension",
+   "desc": "La Chambre régionale des comptes a examiné la gestion de la ville de 2020 à 2025.",
+   "place": "Hôtel de ville, Montceau-les-Mines",
+   "commune": "Montceau-les-Mines",
+   "theme": "mairie",
+   "source": "L'Informateur de Bourgogne, Montceau News",
+   "voix": "Lundi soir, le conseil municipal de Montceau-les-Mines examinait le rapport de la Chambre régionale des comptes. Il porte sur la gestion de la ville de 2020 à 2025. La séance a été très tendue, entre la maire, Isabelle Louis, et l'ancienne maire, Marie-Claude Jarrot.",
+   "lonlat": [
+    4.366,
+    46.668
+   ]
+  },
+  {
+   "tag": "RÉACTIONS",
+   "band": "COMMUNIQUÉ DU MARDI 17 NOVEMBRE",
+   "short": "Les deux versions des faits",
+   "title": "Deux lectures opposées des comptes",
+   "desc": "Isabelle Louis dénonce des « manœuvres de diversion ». Marie-Claude Jarrot défend la gestion passée.",
+   "place": "Montceau-les-Mines",
+   "commune": "Montceau-les-Mines",
+   "theme": "mairie",
+   "source": "Montceau News, L'Informateur de Bourgogne",
+   "voix": "Mardi soir, dans un communiqué, Isabelle Louis regrette que son opposante ait transformé le conseil en tribune de contestation, et parle de manœuvres de diversion. C'est la position de la municipalité. Pendant la séance, Marie-Claude Jarrot a répondu que gérer une ville, ce n'est pas seulement tenir des comptes. Elle a aussi demandé de respecter le travail des agents.",
+   "lonlat": [
+    4.366,
+    46.668
+   ]
+  }
+ ]
+}
