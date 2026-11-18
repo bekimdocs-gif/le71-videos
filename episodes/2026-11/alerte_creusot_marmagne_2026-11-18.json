@@ -1,0 +1,30 @@
+{
+ "format": "alerte",
+ "date_label": "Mer. 18 nov.",
+ "voice_speed": 1.0,
+ "accroche": "Route de Marmagne coupée au Creusot",
+ "question": "Vous êtes privés de courant dans le secteur ?",
+ "ticker": "ALERTE 71  •  Le Creusot : route de Marmagne coupée, courant coupé  •  Évitez le secteur  •  Abonnez-vous à LE 71 Flash News  •",
+ "voix": {
+  "intro": "Alerte info au Creusot : la route de Marmagne est coupée.",
+  "fin": "Vous êtes privés de courant dans le secteur ? Dites-le en commentaire, et abonnez-vous à LE 71 pour être alerté."
+ },
+ "items": [
+  {
+   "tag": "LE CREUSOT",
+   "band": "MER. 18 NOV. · EN COURS",
+   "short": "Route de Marmagne coupée",
+   "title": "Poteau électrique percuté : route et courant coupés",
+   "desc": "Une voiture a percuté un poteau, sectionné au-dessus de la route. Plusieurs dizaines de maisons privées d'électricité.",
+   "place": "Route de Marmagne, Le Creusot",
+   "commune": "Le Creusot",
+   "theme": "secours",
+   "source": "Le JSL",
+   "voix": "Ce mercredi, une voiture a percuté un poteau électrique, route de Marmagne, au Creusot. Le poteau s'est sectionné au-dessus de la chaussée. La route est coupée, et le courant aussi, le temps de l'intervention d'Enedis. Plusieurs dizaines de maisons sont concernées, pour plusieurs heures. Évitez le secteur, et partagez à ceux qui habitent par là.",
+   "lonlat": [
+    4.424,
+    46.801
+   ]
+  }
+ ]
+}
