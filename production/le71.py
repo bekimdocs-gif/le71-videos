@@ -1258,10 +1258,54 @@ def diction(s):
     s = _re.sub(r"\bA\s?(\d{1,2})\b", r"A \1", s)
     return s
 
+# ---------- voix de Léa : OmniVoice (clone de la voix créée dans VoiceStudio), repli Piper ----------
+# La voix de référence est dans voice/lea_ref.wav (+ voice/lea_ref.txt = texte exact lu).
+# LE71_TTS=piper force l'ancienne voix. Si OmniVoice n'est pas installé ou plante, Piper prend le relais.
+LEA_REF = os.path.join(HERE, "voice", "lea_ref.wav")
+LEA_SR = 24000
+_LEA = {"model": None, "prompt": None, "off": os.environ.get("LE71_TTS", "lea").lower() == "piper"}
+
+def _lea_load():
+    if _LEA["model"] is None:
+        os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1"); os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
+        import torch
+        from omnivoice import OmniVoice
+        torch.set_num_threads(max(1, os.cpu_count() or 1))
+        m = OmniVoice.from_pretrained("k2-fsa/OmniVoice", device_map="cpu", dtype=torch.float32)
+        ref_text = open(LEA_REF[:-4] + ".txt", encoding="utf-8").read().strip()
+        _LEA["prompt"] = m.create_voice_clone_prompt(ref_audio=LEA_REF, ref_text=ref_text)
+        _LEA["model"] = m
+    return _LEA["model"]
+
+def _tts_lea(textv, out):
+    import numpy as np
+    m = _lea_load()
+    a = m.generate(text=textv, voice_clone_prompt=_LEA["prompt"],
+                   num_step=int(EP.get("lea_steps", 16)), speed=float(EP.get("lea_speed", 0.92)))[0]
+    a = np.asarray(a, dtype=np.float32)
+    nz = np.nonzero(np.abs(a) > 0.01)[0]                   # retire les silences de début/fin
+    if len(nz): a = a[max(0, nz[0] - 240): nz[-1] + 2400]
+    a = a / max(1e-6, float(np.abs(a).max())) * 0.75          # niveau constant d'une scène à l'autre
+    w = wave.open(out, "wb"); w.setnchannels(1); w.setsampwidth(2); w.setframerate(LEA_SR)
+    w.writeframes((a * 32767).astype(np.int16).tobytes()); w.close()
+
+def _tts_piper(textv, out):
+    raw = out[:-4] + ".piper.wav"
+    subprocess.run([sys.executable, "-m", "piper", "-m", VOICE, "--length-scale", str(EP.get("voice_speed", 1.05)),
+                    "--sentence-silence", "0.12", "-f", raw], input=textv.encode(), check=True, capture_output=True)
+    # même fréquence que la voix de Léa, pour pouvoir mélanger les scènes sans souci
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-ar", str(LEA_SR), "-ac", "1", out], check=True)
+
 def tts(textv, out):
     textv = diction(textv)
-    subprocess.run([sys.executable, "-m", "piper", "-m", VOICE, "--length-scale", str(EP.get("voice_speed", 1.05)),
-                    "--sentence-silence", "0.12", "-f", out], input=textv.encode(), check=True, capture_output=True)
+    if not _LEA["off"] and os.path.exists(LEA_REF):
+        try:
+            _tts_lea(textv, out)
+        except Exception as e:
+            _LEA["off"] = True
+            print("ATTENTION : voix de Léa (OmniVoice) indisponible, repli sur Piper :", repr(e)[:300], file=sys.stderr)
+    if _LEA["off"] or not os.path.exists(out):
+        _tts_piper(textv, out)
     w = wave.open(out); d = w.getnframes() / w.getframerate(); w.close(); return d
 
 # ---------- pipeline ----------

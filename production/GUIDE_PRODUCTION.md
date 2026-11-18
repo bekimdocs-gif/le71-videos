@@ -81,7 +81,7 @@ bash setup.sh
 python3 le71.py episode.json sortie.mp4 --stills apercus/
 ```
 
-Le moteur génère la voix de Léa (Piper, voix française siwis), anime chaque scène, cale l'image sur la voix et produit un MP4 1080×1920, 30 i/s. Les communes sont placées automatiquement à leur position exacte (geo.api.gouv.fr).
+Le moteur génère la voix de Léa avec **OmniVoice** (le moteur de VoiceStudio), clonée à partir de `voice/lea_ref.wav` (voix créée par l'éditeur dans VoiceStudio, le 18 nov. 2026 ; texte lu dans `voice/lea_ref.txt`). Si OmniVoice est absent ou plante, le moteur bascule automatiquement sur Piper (voix siwis) et l'écrit dans la console (« ATTENTION : voix de Léa… ») : le signaler dans le compte rendu. `LE71_TTS=piper` force l'ancienne voix. Réglages facultatifs de l'épisode : `lea_speed` (0.92 par défaut, plus grand = plus rapide), `lea_steps` (16). **Temps de calcul** : sur le serveur (processeur seul), compter ~8 min pour une alerte de 30 s et ~15 min pour un flash de 60 s — lancer le rendu dès le début de la préparation. Le moteur anime chaque scène, cale l'image sur la voix et produit un MP4 1080×1920, 30 i/s. Les communes sont placées automatiquement à leur position exacte (geo.api.gouv.fr).
 
 ### Fichier épisode — formats `matin`, `soir`, `special`
 

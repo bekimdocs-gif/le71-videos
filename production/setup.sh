@@ -19,5 +19,8 @@ for e in onnx onnx.json; do
   [ -f "$KIT/voice/fr_FR-siwis-medium.$e" ] || curl -sSfL -o "$KIT/voice/fr_FR-siwis-medium.$e" \
     "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.$e"
 done
+# voix de Léa (OmniVoice, sur processeur) : PyTorch CPU puis OmniVoice ; le modèle (~2,5 Go) se télécharge au 1er rendu
+python3 -c "import torch" 2>/dev/null || pip install -q --break-system-packages torch torchaudio --index-url https://download.pytorch.org/whl/cpu >/dev/null 2>&1 || true
+python3 -c "import omnivoice" 2>/dev/null || pip install -q --break-system-packages omnivoice soundfile >/dev/null 2>&1 || echo "OmniVoice non installé : la voix Piper sera utilisée."
 which ffmpeg >/dev/null || (apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true)
 echo "Atelier LE 71 prêt."
