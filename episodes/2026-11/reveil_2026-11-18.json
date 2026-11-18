@@ -1,0 +1,58 @@
+{
+ "format": "matin",
+ "date_label": "Mer. 18 nov.",
+ "voice_speed": 1.05,
+ "accroche": "Vigilance jaune vent et orages",
+ "question": "Chez vous, ça souffle fort ce matin ?",
+ "ticker": "Le Réveil 71  •  Vigilance jaune vent et orages en Saône-et-Loire  •  Abonnez-vous à LE 71 Flash News  •",
+ "couverture": {
+  "titre": "Vigilance jaune vent et orages",
+  "lieu": "Saône-et-Loire"
+ },
+ "voix": {
+  "intro": "Vent et orages : la Saône-et-Loire en vigilance jaune ce mercredi. Salut, je suis Léa, voici le Réveil 71.",
+  "sommaire": "Au sommaire ce matin : la vigilance météo et le temps du jour.",
+  "meteo": "Météo-France place le département en vigilance jaune pour le vent et les orages ce mercredi. Ciel couvert, et des températures douces : jusqu'à 16 degrés à Digoin et à Paray-le-Monial. Attention aux rafales sur la route, et rangez ce qui pourrait s'envoler.",
+  "fin": "Et chez vous, ça souffle fort ce matin ? Dites-le en commentaire. C'était le Réveil 71. Abonnez-vous, partagez autour de vous… et rendez-vous ce soir à 20 heures !"
+ },
+ "sommaire_items": [
+  {
+   "tag": "ALERTE",
+   "short": "Vigilance jaune vent et orages",
+   "title": "Vigilance jaune vent et orages"
+  },
+  {
+   "tag": "MÉTÉO",
+   "short": "Le temps du jour",
+   "title": "Le temps du jour"
+  }
+ ],
+ "meteo": {
+  "titre1": "VIGILANCE",
+  "titre2": "JAUNE",
+  "periode": "Mercredi 18 novembre · vent et orages",
+  "source": "Météo-France · météo.fr",
+  "villes": [
+   {
+    "nom": "Digoin",
+    "ciel": "nuages",
+    "tmax": 16,
+    "lonlat": [
+     3.982,
+     46.481
+    ]
+   },
+   {
+    "nom": "Paray-le-Monial",
+    "label": "Paray",
+    "ciel": "nuages",
+    "tmax": 16,
+    "lonlat": [
+     4.12,
+     46.451
+    ]
+   }
+  ]
+ },
+ "items": []
+}
