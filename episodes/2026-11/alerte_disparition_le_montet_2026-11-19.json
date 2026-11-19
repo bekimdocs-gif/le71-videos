@@ -1,0 +1,37 @@
+{
+ "format": "alerte",
+ "date_label": "Jeu. 19 nov.",
+ "voice_speed": 1.0,
+ "accroche": "Disparition inquiétante : appel à témoins",
+ "question": "Vous avez vu cette voiture ? Appelez le 17",
+ "ticker": "ALERTE 71  •  Appel à témoins : Nadine, 58 ans, disparue depuis mercredi  •  Peugeot 208 gris foncé DE-384-FN  •  Gendarmerie : 04 70 43 60 13 ou le 17  •",
+ "couverture": {
+  "titre": "Disparition inquiétante : appel à témoins",
+  "lieu": "Le Montet (03)",
+  "photo": "/home/claude/alerte/couverture_photo.png"
+ },
+ "voix": {
+  "intro": "Alerte info : appel à témoins après une disparition inquiétante, aux portes de la Saône-et-Loire.",
+  "fin": "Vous avez vu cette voiture ? Appelez le dix-sept. Partagez cette vidéo autour de vous : chaque partage peut aider."
+ },
+ "items": [
+  {
+   "tag": "ALLIER",
+   "band": "DISPARUE DEPUIS MER. 18 NOV. · 7H",
+   "short": "Disparition inquiétante",
+   "title": "Nadine, 58 ans, portée disparue depuis mercredi",
+   "desc": "Partie du Montet (Allier) en Peugeot 208 gris foncé DE-384-FN, calandre manquante. Gendarmerie de Souvigny : 04 70 43 60 13 ou le 17.",
+   "place": "Le Montet, dans l'Allier",
+   "commune": "Le Montet (Allier)",
+   "label_carte": "VERS LE MONTET (03)",
+   "lonlat": [
+    3.72,
+    46.47
+   ],
+   "theme": "secours",
+   "photo": "/home/claude/alerte/panneau.png",
+   "source": "Gendarmerie de l'Allier",
+   "voix": "La gendarmerie de l'Allier recherche Nadine Amathieu, cinquante-huit ans. Elle a quitté son domicile du Montet mercredi, vers 7 heures du matin. Elle conduit une Peugeot 208 gris foncé, immatriculée D E, trois cent quatre-vingt-quatre, F N. Particularité : la calandre est manquante. Si vous avez une information, appelez la gendarmerie de Souvigny, au zéro quatre, soixante-dix, quarante-trois, soixante, treize."
+  }
+ ]
+}
