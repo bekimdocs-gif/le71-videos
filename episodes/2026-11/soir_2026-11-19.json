@@ -1,0 +1,51 @@
+{
+ "format": "soir",
+ "date_label": "Jeu. 19 nov.",
+ "voice_speed": 1.05,
+ "accroche": "Le 71 accueille 26 docteurs juniors",
+ "question": "Vous avez déjà consulté un docteur junior ?",
+ "ticker": "Le 20h du 71  •  L'essentiel de la journée en Saône-et-Loire  •  Abonnez-vous à LE 71 Flash News  •",
+ "couverture": {
+  "titre": "Le 71 accueille 26 docteurs juniors",
+  "lieu": "Saône-et-Loire"
+ },
+ "voix": {
+  "intro": "Vingt-six docteurs juniors sont arrivés dans nos cabinets. Salut, je suis Léa, voici le 20 heures du 71.",
+  "sommaire": "Au sommaire ce soir : les docteurs juniors dans nos cabinets, et le Beaujolais nouveau à Sanvignes.",
+  "fin": "Et vous, vous avez déjà consulté un docteur junior ? Dites-le en commentaire. C'était le 20 heures du 71. Abonnez-vous, partagez autour de vous… et rendez-vous demain matin pour le Réveil 71 !"
+ },
+ "items": [
+  {
+   "tag": "SANTÉ",
+   "band": "DEPUIS LE 2 NOV.",
+   "short": "Les docteurs juniors",
+   "title": "26 docteurs juniors dans nos cabinets",
+   "desc": "Plus de rendez-vous, mais pas de nouveau médecin traitant.",
+   "place": "Cabinets de médecine générale du 71",
+   "commune": "Chalon-sur-Saône",
+   "theme": "sante",
+   "source": "Le JSL (18/11/2026)",
+   "voix": "Plus de créneaux chez le généraliste, mais pas de nouveau médecin traitant. Depuis le 2 novembre, 26 docteurs juniors consultent dans des cabinets de Saône-et-Loire, pour un an. Ce sont des médecins en dernière année, thèse en poche, salariés du C H U. Chez les généralistes, la réforme passe mal. L'A R S, elle, demande du temps avant le bilan. Source : le J S L.",
+   "lonlat": [
+    4.853,
+    46.781
+   ]
+  },
+  {
+   "tag": "SANVIGNES",
+   "band": "CE SOIR DÈS 17H",
+   "short": "Beaujolais nouveau à Sanvignes",
+   "title": "Le Beaujolais nouveau fêté à Sanvignes",
+   "desc": "Soirée conviviale au marché de la Trèche, réservation conseillée.",
+   "place": "Marché de la Trèche, Sanvignes-les-Mines",
+   "commune": "Sanvignes-les-Mines",
+   "theme": "marche",
+   "source": "Montceau News (19/11/2026)",
+   "voix": "Direction Sanvignes. Le Beaujolais nouveau est arrivé ce jeudi. Le marché de la Trèche le fête depuis 17 heures, avec des œufs en meurette maison. Réservation conseillée. Source : Montceau News.",
+   "lonlat": [
+    4.2731,
+    46.6651
+   ]
+  }
+ ]
+}
