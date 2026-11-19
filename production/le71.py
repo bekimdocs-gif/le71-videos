@@ -1262,7 +1262,9 @@ def diction(s):
         s = _re.sub(rf"\b{sig}\b", " ".join(sig), s)
     s = _re.sub(r"\bR\.\s?C\.\s?E\.\s?A\.?", "R C E A", s)
     s = s.replace("R C E A", "R. C. E. A.")                 # une petite pause entre chaque lettre : mieux articulé
-    s = _re.sub(r"(?<![\d])(?<!\d[,.])71(?!\d)(?![,.]\d)", "soixante et onze", s)   # « le 71 » était parfois entendu « 61 »
+    # « 71 » reste écrit en chiffres : écrit « soixante et onze », la voix de Léa le disait « soixante-dix et onze »
+    # (test du 19/11/2026 : en chiffres, « 71 » est bien entendu dans 7 phrases sur 7).
+    s = _re.sub(r"\bsoixante[- ]et[- ]onze\b", "71", s, flags=_re.I)
     s = _re.sub(r"(?<=[^\W\d_])-(?=[^\W\d_])", " ", s)          # Paray-le-Monial -> Paray le Monial : chaque mot bien détaché
     s = _re.sub(r"\bA\s?(\d{1,2})\b", r"A \1", s)
     return s
